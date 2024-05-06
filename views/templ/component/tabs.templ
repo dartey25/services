@@ -1,0 +1,30 @@
+package component
+
+templ TabList() {
+	<ul class="nav nav-tabs nav-tabs-bottom mb-0" role="tablist">
+		{ children... }
+	</ul>
+}
+
+type TabItemProps struct {
+	Text        string
+	ContentLink string
+	IsActive    bool
+}
+
+templ TabItem(props TabItemProps) {
+	<li
+		hx-get={ props.ContentLink }
+		hx-trigger="click"
+		role="tab"
+		aria-selected?={ props.IsActive }
+		aria-controls="tab-content"
+		class="nav-item"
+	>
+		if props.IsActive {
+			<span class="nav-link font-weight-bolder active">{ props.Text }</span>
+		} else {
+			<span class="nav-link">{ props.Text }</span>
+		}
+	</li>
+}

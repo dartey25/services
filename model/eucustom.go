@@ -1,0 +1,111 @@
+package model
+
+import (
+	"database/sql"
+	"encoding/xml"
+	"fmt"
+	"time"
+)
+
+type AeoPaginatedData struct {
+	Data     []AeoData `json:"data" db:"DATA"`
+	Pages    int       `json:"pages"`
+	Total    int       `json:"total" db:"TOTAL"`
+	NextPage int       `json:"nextPage"`
+}
+
+type AeoData struct {
+	Id         int          `json:"id" db:"ID"`
+	Holder     string       `json:"holder,omitempty" db:"NAME"`
+	IssCountry string       `json:"issCountry,omitempty" db:"CNT"`
+	CusCode    string       `json:"cusCode,omitempty" db:"CUSTOM"`
+	AuthType   string       `json:"authType,omitempty" db:"CERT"`
+	EffDate    string       `json:"effDate,omitempty" db:"EFFDATE"`
+	CreatedAt  time.Time    `json:"createdAt" db:"DATE_CREATE"`
+	DeletedAt  sql.NullTime `json:"deletedAt,omitempty" db:"DATE_DELETE"`
+}
+
+type AeoType struct {
+	Code        string
+	Description string
+	Checked     bool
+}
+
+type SoapEnvelope struct {
+	XMLName xml.Name `xml:"soapenv:Envelope"`
+	XMLNS   string   `xml:"xmlns:soapenv,attr"`
+	EoriNS  string   `xml:"xmlns:eori,attr"`
+	Header  string   `xml:"soapenv:Header"`
+	Body    SoapBody
+}
+
+type SoapBody struct {
+	XMLName      xml.Name `xml:"soapenv:Body"`
+	ValidateEORI ValidateEORI
+}
+
+type ValidateEORI struct {
+	XMLName xml.Name `xml:"eori:validateEORI"`
+	Eori    string   `xml:"eori:eori"`
+}
+
+type EoriEnvelope struct {
+	XMLName xml.Name `xml:"Envelope"`
+	Body    EoriBody `xml:"Body"`
+}
+
+type EoriBody struct {
+	XMLName  xml.Name     `xml:"Body"`
+	EORIResp EORIResponse `xml:"validateEORIResponse"`
+}
+
+type EORIResponse struct {
+	XMLName xml.Name   `xml:"validateEORIResponse"`
+	Return  EoriReturn `xml:"return"`
+}
+
+type EoriReturn struct {
+	XMLName     xml.Name     `xml:"return"`
+	RequestDate string       `xml:"requestDate"`
+	Result      []EoriResult `xml:"result"`
+}
+
+type EoriResult struct {
+	XMLName     xml.Name `xml:"result" json:"-"`
+	EORI        string   `xml:"eori" json:"eori"`
+	Status      int      `xml:"status" json:"status"`
+	StatusDescr string   `xml:"statusDescr" json:"statusDescription"`
+	Name        string   `xml:"name,omitempty" json:"name,omitempty"`
+	Address     string   `xml:"address,omitempty" json:"address,omitempty"`
+	Street      string   `xml:"street,omitempty" json:"street,omitempty"`
+	PostalCode  string   `xml:"postalCode,omitempty" json:"postalCode,omitempty"`
+	City        string   `xml:"city,omitempty" json:"city,omitempty"`
+	Country     string   `xml:"country,omitempty" json:"country,omitempty"`
+}
+
+type EoriDisplayResult struct {
+	Eori    string
+	Status  int
+	Name    string
+	Address string
+}
+
+func NewEoriDisplayResult(data EoriResult) EoriDisplayResult {
+	address := data.Street
+	if data.PostalCode != "" {
+		address += fmt.Sprintf(", %s", data.PostalCode)
+	}
+	if data.City != "" {
+		address += fmt.Sprintf(", %s", data.City)
+	}
+	if data.Country != "" {
+		address += fmt.Sprintf(", %s", data.Country)
+	}
+
+	return EoriDisplayResult{
+		Eori:    data.EORI,
+		Status:  data.Status,
+		Name:    data.Name,
+		Address: address,
+	}
+}

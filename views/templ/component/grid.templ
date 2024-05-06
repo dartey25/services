@@ -1,0 +1,12 @@
+package component
+
+type RowProps struct {
+ID string
+ClassName string
+}
+
+templ Row(props RowProps) {
+<div id={ props.ID } class={ "row" , props.ClassName }>
+  { children... }
+</div>
+}

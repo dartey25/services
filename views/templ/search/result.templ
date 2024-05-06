@@ -1,0 +1,113 @@
+package search
+
+import (
+"fmt"
+"strconv"
+"github.com/mdoffice/md-services/views/templ/component"
+"github.com/mdoffice/md-services/model"
+)
+
+templ Error(message string) {
+<span id="results-total" hx-swap-oob="outerHTML">0</span>
+@component.Alert(component.AlertProps{Text: message, Variant: "danger", ClassName: "m-3"})
+}
+
+templ NotFound() {
+<span id="results-total" hx-swap-oob="outerHTML">0</span>
+@component.Alert(component.AlertProps{Text: "Sorry, no data found :(", Variant: "info", ClassName: "m-3"})
+}
+
+templ AeoResults(data model.AeoPaginatedData) {
+<span id="results-total" hx-swap-oob="outerHTML">{strconv.Itoa(data.Total)}</span>
+<ul class="media-list">
+  for index, item := range data.Data {
+  if data.NextPage == 0 {
+  @resultItem(index + 1, item)
+  } else {
+  @resultItem((data.NextPage - 1) * len(data.Data) + index + 1, item)
+  }
+  }
+</ul>
+<div id="results-footer" hx-swap-oob="innerHTML">
+  <button hx-get="/aeo/q" hx-target="#results" hx-target-*="#results" hx-include="#search-form" hx-swap="beforeend"
+    class="btn btn-primary">Показати ще</button>
+</div>
+}
+
+
+templ resultItem(index int, item model.AeoData) {
+<li class="media card-body py-1">
+  <div id={fmt.Sprintf("item-%v", index)} class="mr-sm-3 mb-2 mb-sm-0 text-danger d-flex media-left align-items-center">
+    {fmt.Sprintf("%v.", index)}
+  </div>
+  <div class="media-body pl-3">
+    <div class="row">
+      <div class="col-sm-3 col-lg-2 text-right header-col">
+        <span class="font-weight-semibold">Holder:</span>
+      </div>
+      <div class="col-sm-9 col-lg-10 text-col">{item.Holder}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 col-lg-2 text-right header-col">
+        <span class="font-weight-semibold">IssCountry:</span>
+      </div>
+      <div class="col-sm-9 col-lg-10 text-col">{item.IssCountry}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 col-lg-2 text-right header-col">
+        <span class="font-weight-semibold">Митниця:</span>
+      </div>
+      <div class="col-sm-9 col-lg-10 text-col">{item.CusCode}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 col-lg-2 text-right header-col">
+        <span class="font-weight-semibold">AuthType:</span>
+      </div>
+      <div class="col-sm-9 col-lg-10 text-col">{item.AuthType}</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 col-lg-2 text-right header-col">
+        <span class="font-weight-semibold">EffDate:</span>
+      </div>
+      <div class="col-sm-9 col-lg-10 text-col">{item.EffDate}</div>
+    </div>
+  </div>
+</li>
+}
+
+templ EoriResults(data model.EoriDisplayResult) {
+@resultsTable() {
+<tr>
+  <td>{data.Eori}</td>
+  if data.Status == 0 {
+  <td>
+    <div class="badge badge-success">Дійсний</div>
+  </td>
+  } else {
+  <td>
+    <div class="badge badge-warning">Недійсний</div>
+  </td>
+  }
+  <td>{data.Name}</td>
+  <td>{data.Address}</td>
+</tr>
+}
+}
+
+templ resultsTable() {
+<div class="card card-light table-responsive">
+  <table class="table">
+    <thead class="card-header bg-light border-color-brand border-bottom-2">
+      <tr>
+        <th>Код</th>
+        <th>Статус</th>
+        <th>Назва</th>
+        <th>Адреса</th>
+      </tr>
+    </thead>
+    <tbody>
+      {children...}
+    </tbody>
+  </table>
+</div>
+}

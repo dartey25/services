@@ -1,0 +1,121 @@
+package eucustom
+
+import (
+"strings"
+"github.com/mdoffice/md-services/views/templ/layout"
+c "github.com/mdoffice/md-services/views/templ/component"
+"github.com/mdoffice/md-services/model"
+"github.com/mdoffice/md-services/views/templ/component/form"
+)
+
+templ Index() {
+@layout.Layout() {
+@layout.MainCard(layout.MainCardProps{Tabs: tabsLayout()}) {
+<div id="tab-content"></div>
+}
+@layout.SearchResultCard()
+}
+}
+
+templ tabsLayout() {
+<div id="tabs" hx-get="/aeo" hx-trigger="load" hx-target="#tabs" hx-swap="innerHTML"></div>
+}
+
+templ EoriTab(){
+<div hx-swap-oob="innerHTML:#main-header>span">EORI Header</div>
+<div hx-swap-oob="innerHTML:#main-description">Description 2</div>
+@c.TabList() {
+@c.TabItem(c.TabItemProps{Text: "aeo", ContentLink: "/aeo"})
+@c.TabItem(c.TabItemProps{Text: "eori", ContentLink: "/eori", IsActive: true})
+}
+<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
+  @EoriForm()
+</div>
+}
+
+templ AeoTab(props AeoFormProps) {
+<div hx-swap-oob="innerHTML:#main-header>span">AEO Header</div>
+<div hx-swap-oob="innerHTML:#main-description">Description 1</div>
+@c.TabList() {
+@c.TabItem(c.TabItemProps{Text: "aeo", ContentLink: "/aeo", IsActive: true})
+@c.TabItem(c.TabItemProps{Text: "eori", ContentLink: "/eori"})
+}
+<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
+  @AeoForm(props)
+</div>
+}
+
+type AeoFormProps struct {
+Holder string
+Country string
+Types []model.AeoType
+CountryList []string
+}
+
+templ AeoForm(props AeoFormProps) {
+<form id="search-form" hx-get="/aeo/data" hx-target="#results-body" hx-target-*="#results-body" hx-disabled-elt="this">
+  @form.Group() {
+  @form.Label("Authorisation holder name")
+  <div class="col-sm-4">
+    <input type="text" name="holder" class="form-control" value={ props.Holder } />
+  </div>
+  }
+  @form.Group() {
+  @form.Label("Issuing country")
+  <div class="col-sm-4">
+    <select id="countrySelect" class="form-control" name="country">
+      for _, country := range props.CountryList {
+      if country == props.Country {
+      <option value={ country } selected>{ country }</option>
+      } else {
+      <option value={ country }>{ country }</option>
+      }
+      }
+    </select>
+  </div>
+  }
+  @form.Group() {
+  @form.Label("Authorisation type")
+  <div class="col-sm-9 d-flex flex-column">
+    for _, t :=range props.Types {
+    <div class="form-check form-check-inline">
+      <label class="form-check-label">
+        if t.Checked {
+        <input type="checkbox" class="form-check-input" name="type" value={ t.Code } checkd />
+        } else {
+        <input type="checkbox" class="form-check-input" name="type" value={ t.Code } />
+        }
+        { strings.ToUpper(t.Code) } - { t.Description }
+      </label>
+    </div>
+    }
+  </div>
+  }
+  @form.Group() {
+  @form.Label("")
+  <div class="col-sm-9">
+    <button class="btn btn-primary" type="submit">
+      <i class="icon-search4 mr-2"></i>Знайти
+    </button>
+    <button hx-get="/aeo/form" hx-target="#search-form" hx-swap="outerHTML" class="btn btn-light">Очистити</button>
+  </div>
+  }
+</form>
+}
+
+templ EoriForm() {
+<form hx-get="/eori/data" hx-target="#results" hx-indicator="#indicator, #results"
+  hx-disabled-elt="#eoriInput, #eoriSubmitBtn">
+  @form.Group() {
+  @form.Label("Eori code")
+  @c.Row(c.RowProps{ClassName: "col-sm-6"}) {
+  <div class="col-8">
+    <input id="eoriInput" type="text" name="code" class="form-control" />
+  </div>
+  <div class="col-4">
+    @c.Button(c.ButtonProps{ID: "eori-search-btn", Variant: "primary", Text: "Перевірити"})
+  </div>
+  }
+  }
+</form>
+}

@@ -1,0 +1,18 @@
+package component
+
+type CardProps struct {
+	ID        string
+	ClassName string
+}
+
+templ Card(props CardProps) {
+	<div id={ props.ID } class={ "card card-light" ,props.ClassName }>
+		{ children... }
+	</div>
+}
+
+templ CardBody(classname string) {
+	<div class={ "card-body border-top-0" , classname }>
+		{ children... }
+	</div>
+}

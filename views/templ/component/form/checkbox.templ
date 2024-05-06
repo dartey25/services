@@ -1,0 +1,10 @@
+package form
+
+templ Checkbox(name, value, label string, checked bool) {
+<div class="form-check form-check-inline">
+  <label class="form-check-label">
+    <input type="checkbox" class="form-check-input" name={ name } value={ value } checked?={ checked } />
+    { label }
+  </label>
+</div>
+}
