@@ -1,7 +1,23 @@
 package form
 
 templ Group() {
-<div class="form-group row mb-2">
-  { children... }
-</div>
+	<div class="form-group row mb-2">
+		{ children... }
+	</div>
+}
+
+type BtnGroupProps struct {
+	Label   string
+	Buttons []templ.Component
+}
+
+templ BtnGroup(props BtnGroupProps) {
+	@Group() {
+		@Label(props.Label)
+		<div class="col-sm-9">
+			for _, btn := range props.Buttons {
+				@btn
+			}
+		</div>
+	}
 }

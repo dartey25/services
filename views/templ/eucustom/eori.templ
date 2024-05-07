@@ -1,0 +1,77 @@
+package eucustom
+
+import (
+	"github.com/mdoffice/md-services/model"
+	c "github.com/mdoffice/md-services/views/templ/component"
+	"github.com/mdoffice/md-services/views/templ/component/form"
+	"github.com/mdoffice/md-services/views/templ/search"
+)
+
+templ EoriTab() {
+	<div hx-swap-oob="innerHTML:#main-header>span">Валідація коду EORI</div>
+	<div hx-swap-oob="innerHTML:#main-description">Перевірити правильність коду</div>
+	@c.TabList() {
+		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/aeo"})
+		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/eori", IsActive: true})
+	}
+	<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
+		@EoriForm()
+	</div>
+}
+
+templ EoriForm() {
+	<form
+		hx-get="/eori/data"
+		hx-target="#results"
+		hx-indicator="#indicator, #results"
+		hx-disabled-elt="#eoriInput, #eoriSubmitBtn"
+		hx-on::before-request={ search.ShowResults() }
+	>
+		@form.Group() {
+			@form.Label("Код")
+			@c.Row(c.GridProps{ClassName: "col-sm-6"}) {
+				@form.Input(form.InputProps{ID: "eori-input", Name: "code", ParentCol: "col-8"})
+				<div class="col-4">
+					@c.Button(c.ButtonProps{ID: "eori-search-btn", Variant: "primary", Text: "Перевірити"})
+				</div>
+			}
+		}
+	</form>
+}
+
+templ EoriResults(data model.EoriDisplayResult) {
+	@resultsTable() {
+		<tr>
+			<td>{ data.Eori }</td>
+			if data.Status == 0 {
+				<td>
+					<div class="badge badge-success">Дійсний</div>
+				</td>
+			} else {
+				<td>
+					<div class="badge badge-warning">Недійсний</div>
+				</td>
+			}
+			<td>{ data.Name }</td>
+			<td>{ data.Address }</td>
+		</tr>
+	}
+}
+
+templ resultsTable() {
+	<div class="card card-light table-responsive">
+		<table class="table">
+			<thead class="card-header bg-light border-color-brand border-bottom-2">
+				<tr>
+					<th>Код</th>
+					<th>Статус</th>
+					<th>Назва</th>
+					<th>Адреса</th>
+				</tr>
+			</thead>
+			<tbody>
+				{ children... }
+			</tbody>
+		</table>
+	</div>
+}

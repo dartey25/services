@@ -1,0 +1,26 @@
+package component
+
+type LinkProps struct {
+	ID        string
+	ClassName string
+	Href      string
+	Text      string
+	Target    string
+}
+
+templ Link(props LinkProps) {
+	<a
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ "link", props.ClassName }
+		if props.Href != "" {
+			href={ templ.URL(props.Href) }
+		} else {
+			href="#"
+		}
+		if props.Target != "" {
+			target={ props.Target }
+		}
+	>{ props.Text }</a>
+}

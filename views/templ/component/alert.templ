@@ -3,14 +3,14 @@ package component
 import "fmt"
 
 type AlertProps struct {
-Text string
-Variant string
-ClassName string
-Icon string
+	Text      string
+	Variant   string
+	ClassName string
+	Icon      string
 }
 
 templ Alert(props AlertProps) {
-<div class={ "alert" , fmt.Sprintf("alert-%s", props.Variant), props.ClassName }>
-  <span class="font-weight-semibold">{ props.Text }</span>
-</div>
+	<div class={ "alert" , fmt.Sprintf("alert-%s", props.Variant), props.ClassName }>
+		<span class="font-weight-semibold">{ props.Text }</span>
+	</div>
 }

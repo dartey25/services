@@ -1,10 +1,26 @@
 package form
 
-templ Checkbox(name, value, label string, checked bool) {
-<div class="form-check form-check-inline">
-  <label class="form-check-label">
-    <input type="checkbox" class="form-check-input" name={ name } value={ value } checked?={ checked } />
-    { label }
-  </label>
-</div>
+type CheckboxProps struct {
+	ID        string
+	Name      string
+	Value     string
+	Label     string
+	IsChecked bool
+}
+
+templ Checkbox(props CheckboxProps) {
+	<div class="form-check form-check-inline">
+		<label for={ props.ID } class="form-check-label">
+			<input
+				id={ props.ID }
+				type="checkbox"
+				class="form-check-input"
+				name={ props.Name }
+				value={ props.Value }
+				checked?={ 
+      props.IsChecked }
+			/>
+			{ props.Label }
+		</label>
+	</div>
 }

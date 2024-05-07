@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mdoffice/md-services/model"
@@ -28,9 +29,9 @@ func (h *EuCustomHandler) HandleAeoTab(c echo.Context) error {
 	queryTypes := c.QueryParams()["type"]
 
 	types := make([]model.AeoType, 3)
-	types[0] = model.AeoType{Code: "AEOC", Description: "Application or authorisation for the status of Authorised Economic Operator — Customs simplifications", Checked: false}
-	types[1] = model.AeoType{Code: "AEOF", Description: "Application or authorisation for the status of Authorised Economic Operator — Customs simplifications/Security and safety", Checked: false}
-	types[2] = model.AeoType{Code: "AEOS", Description: "Application or authorisation for the status of Authorised Economic Operator — Security and safety", Checked: false}
+	types[0] = model.AeoType{Code: "AEOC", Description: "Заява або дозвіл на отримання статусу Уповноваженого економічного оператора — Митні спрощення", Checked: false}
+	types[1] = model.AeoType{Code: "AEOF", Description: "Заява або дозвіл на отримання статусу Уповноваженого економічного оператора — Митні спрощення/Безпека та захист", Checked: false}
+	types[2] = model.AeoType{Code: "AEOS", Description: "Заява або дозвіл на отримання статусу Уповноваженого економічного оператора — Безпека та захист", Checked: false}
 
 	for i := range types {
 		for _, t := range queryTypes {
@@ -51,9 +52,9 @@ func (h *EuCustomHandler) HandleAeoForm(c echo.Context) error {
 	queryTypes := c.QueryParams()["type"]
 
 	types := make([]model.AeoType, 3)
-	types[0] = model.AeoType{Code: "AEOC", Description: "Application or authorisation for the status of Authorised Economic Operator — Customs simplifications", Checked: false}
-	types[1] = model.AeoType{Code: "AEOF", Description: "Application or authorisation for the status of Authorised Economic Operator — Customs simplifications/Security and safety", Checked: false}
-	types[2] = model.AeoType{Code: "AEOS", Description: "Application or authorisation for the status of Authorised Economic Operator — Security and safety", Checked: false}
+	types[0] = model.AeoType{Code: "AEOC", Description: "Заява або дозвіл на отримання статусу Уповноваженого економічного оператора — Митні спрощення", Checked: false}
+	types[1] = model.AeoType{Code: "AEOF", Description: "Заява або дозвіл на отримання статусу Уповноваженого економічного оператора — Митні спрощення/Безпека та захист", Checked: false}
+	types[2] = model.AeoType{Code: "AEOS", Description: "Заява або дозвіл на отримання статусу Уповноваженого економічного оператора — Безпека та захист", Checked: false}
 
 	for i := range types {
 		for _, t := range queryTypes {
@@ -70,6 +71,7 @@ func (h *EuCustomHandler) HandleEoriForm(c echo.Context) error {
 }
 
 func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
+	time.Sleep(time.Second * 4)
 	queryParams := c.QueryParams()
 	holder := c.QueryParam("holder")
 	country := c.QueryParam("country")
@@ -108,7 +110,7 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 
 	results.NextPage = page + 1
 	if isHtmx {
-		return Render(c, http.StatusOK, search.AeoResults(results))
+		return Render(c, http.StatusOK, eucustom.AeoResults(results))
 	}
 	return c.JSON(http.StatusOK, results)
 }
@@ -120,7 +122,7 @@ func (h *EuCustomHandler) HandleGetEoriData(c echo.Context) error {
 		return Render(c, http.StatusOK, search.Error(err.Error()))
 	}
 
-	return Render(c, http.StatusOK, search.EoriResults(model.NewEoriDisplayResult(data[0])))
+	return Render(c, http.StatusOK, eucustom.EoriResults(model.NewEoriDisplayResult(data[0])))
 }
 
 func (h *EuCustomHandler) HandleJokerEoriData(c echo.Context) error {

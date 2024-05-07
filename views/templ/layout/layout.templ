@@ -1,78 +1,60 @@
 package layout
 
 import (
-"github.com/mdoffice/md-services/views/templ/component"
+	"github.com/mdoffice/md-services/views/templ/component"
 )
 
 templ scripts() {
-<script src="/static/js/htmx.min.js"></script>
-<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
-<script src="/static/js/jquery-slim-3.7.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
-  integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="/static/js/htmx.min.js"></script>
+	<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
+	<script src="/static/js/jquery-slim-3.7.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 }
 
 templ styles() {
-<link href="https://www.mdoffice.com.ua/md-sanctions/static/css/main.css?v=20230823" rel="stylesheet" type="text/css" />
-<link href="/static/css/index.css" rel="stylesheet" type="text/css" />
+	<link href="https://www.mdoffice.com.ua/md-sanctions/static/css/main.css?v=20230823" rel="stylesheet" type="text/css"/>
+	<link href="/static/css/index.css" rel="stylesheet" type="text/css"/>
 }
 
-
 templ Layout() {
-<div>
-  @scripts()
-  @styles()
-  <div class="page-content">
-    <div class="content-wrapper">
-      <div class="content-inner">
-        <div class="content content-boxed">
-          { children... }
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+	<div>
+		@scripts()
+		@styles()
+		<div class="page-content">
+			<div class="content-wrapper">
+				<div class="content-inner">
+					<div class="content content-boxed">
+						{ children... }
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 }
 
 type MainCardProps struct {
-Header string
-Description string
-Tabs templ.Component
+	Header      string
+	Description string
+	Tabs        templ.Component
 }
 
 templ MainCard(props MainCardProps) {
-@component.Card(component.CardProps{}) {
-if props.Tabs != nil {
-@props.Tabs
-}
-<div class="page-header page-header-xs">
-  <div class="page-header-content header-elements-inline">
-    <div class="page-title pt-3 pb-0">
-      <h4 id="main-header" class="">
-        <span class="font-weight-semibold">{ props.Header }</span>
-      </h4>
-    </div>
-  </div>
-</div>
-<div id="main-description" class="px-3 text-muted">{ props.Description }</div>
-@component.CardBody("") {
-{ children... }
-}
-}
-}
-
-templ SearchResultCard() {
-@component.Card(component.CardProps{ID: "results"}) {
-<div id="results-header"
-  class="card-header bg-light border-color-brand border-bottom-2 header-elements-inline header-elements-inline">
-  <h6 class="card-title">Результати пошуку</h6>
-  <div class="header-elements text-muted font-weight-semibold d-none">
-    <span class="mr-2">Знайдено:</span>
-    <span id="results-total"></span>
-  </div>
-</div>
-<div id="results-body" class="card-body p-0"></div>
-<div id="results-footer" class="card-footer text-center"></div>
-}
+	@component.Card(component.CardProps{}) {
+		if props.Tabs != nil {
+			@props.Tabs
+		}
+		<div class="page-header page-header-xs">
+			<div class="page-header-content header-elements-inline">
+				<div class="page-title pt-3 pb-0">
+					<h4 id="main-header" class="">
+						<span class="font-weight-semibold">{ props.Header }</span>
+					</h4>
+				</div>
+			</div>
+		</div>
+		<div id="main-description" class="px-3 text-muted">{ props.Description }</div>
+		@component.CardBody("") {
+			{ children... }
+		}
+	}
 }

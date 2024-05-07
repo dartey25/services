@@ -1,0 +1,114 @@
+package eucustom
+
+import (
+	"github.com/mdoffice/md-services/model"
+	c "github.com/mdoffice/md-services/views/templ/component"
+	"github.com/mdoffice/md-services/views/templ/component/form"
+	"github.com/mdoffice/md-services/views/templ/search"
+	"strings"
+	"fmt"
+)
+
+templ AeoTab(props AeoFormProps) {
+	<div hx-swap-oob="innerHTML:#main-header>span">Уповноважені економічні оператори</div>
+	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
+	@c.TabList() {
+		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/aeo", IsActive: true})
+		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/eori"})
+	}
+	<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
+		@AeoForm(props)
+	</div>
+}
+
+type AeoFormProps struct {
+	Holder      string
+	Country     string
+	Types       []model.AeoType
+	CountryList []string
+}
+
+templ AeoForm(props AeoFormProps) {
+	<form
+		id="search-form"
+		hx-get="/aeo/data"
+		hx-target="#results-body"
+		hx-target-*="#results-body"
+		hx-indicator="#loading-indicator"
+		hx-on::before-request={ search.ShowResults() }
+		hx-disabled-elt="this"
+	>
+		@form.Group() {
+			@form.Label("Власник уповноваження")
+			@form.Input(form.InputProps{Name: "holder", Value: props.Holder})
+		}
+		@form.Group() {
+			@form.Label("Країна видачі")
+			<div class="col-sm-4">
+				<select id="countrySelect" class="form-control" name="country">
+					for _, country := range props.CountryList {
+						if country == props.Country {
+							<option value={ country } selected>{ country }</option>
+						} else {
+							<option value={ country }>{ country }</option>
+						}
+					}
+				</select>
+			</div>
+		}
+		@form.Group() {
+			@form.Label("Тип уповноваження")
+			@c.Column(c.GridProps{ClassName: "col-sm-9"}) {
+				for _, t :=range props.Types {
+					@form.Checkbox(form.CheckboxProps{
+						Name:      "type",
+						Value:     t.Code,
+						IsChecked: t.Checked,
+						Label:     fmt.Sprintf("%s - %s", strings.ToUpper(t.Code), t.Description)})
+				}
+			}
+		}
+		@form.BtnGroup(form.BtnGroupProps{Buttons: []templ.Component{
+			c.Button(c.ButtonProps{
+				Text: "Знайти", Variant: "primary", Type: "submit", Icon: "search4", ClassName: "mr-2"}),
+			c.Button(c.ButtonProps{Text: "Очистити", Variant: "light", Attributes: templ.Attributes{
+				"hx-get":    "/aeo/form",
+				"hx-target": "#search-form",
+				"hx-swap":   "outerHTML",
+			}}),
+		}})
+	</form>
+}
+
+templ resultItem(index int, item model.AeoData) {
+	@search.ResultMedia(search.ResultMediaProps{Index: index, Rows: []templ.Component{
+		search.ResultRow(search.ResultRowProps{Label: "Власник", Text: item.Holder}),
+		search.ResultRow(search.ResultRowProps{Label: "Країна видачі", Text: item.IssCountry}),
+		search.ResultRow(search.ResultRowProps{Label: "Митниця",
+			Component: c.Link(c.LinkProps{
+				Href:   fmt.Sprintf("https://ec.europa.eu/taxation_customs/dds2/rd/rd_details.jsp?Lang=EN&DesLang=EN&RefNum=%s", item.CusCode),
+				Text:   item.CusCode,
+				Target: "_blank"})}),
+		search.ResultRow(search.ResultRowProps{Label: "Тип уповноваження", Text: item.AuthType}),
+		search.ResultRow(search.ResultRowProps{Label: "Дата видачі", Text: item.EffDate}),
+	},
+	})
+}
+
+templ AeoResults(data model.AeoPaginatedData) {
+	@search.ResultTotalCounter(data.Total, templ.Attributes{"hx-swap-oob": "outerHTML"})
+	@search.ResultMediaList() {
+		for index, item := range data.Data {
+			@resultItem(index, item)
+		}
+	}
+	@search.ResultFooter() {
+		@search.ShowMoreBtn(templ.Attributes{
+			"hx-get":      "/aeo/data",
+			"hx-target":   "#results-body",
+			"hx-target-*": "#results-body",
+			"hx-include":  "#search-form",
+			"hx-swap":     "beforeend",
+		})
+	}
+}

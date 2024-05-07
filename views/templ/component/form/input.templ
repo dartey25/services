@@ -1,7 +1,33 @@
 package form
 
-templ Input(name, value string) {
-<div class="col-sm-4">
-  <input type="text" name={ name } class="form-control" value={ value } />
-</div>
+type InputProps struct {
+	ID        string
+	Name      string
+	Value     string
+	Type      string
+	ParentCol string
+}
+
+templ Input(props InputProps) {
+	<div
+		if props.ParentCol == "" {
+			class="col-sm-4"
+		} else {
+			class={ props.ParentCol }
+		}
+	>
+		<input
+			if props.Type !="" {
+				type={ props.Type }
+			} else {
+				type="text"
+			}
+			if props.ID !="" {
+				id={ props.ID }
+			}
+			name={ props.Name }
+			class="form-control"
+			value={ props.Value }
+		/>
+	</div>
 }

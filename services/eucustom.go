@@ -72,10 +72,10 @@ func (s *EuCustomService) GetAeoData(holder, country string, types []string, pag
 	}
 
 	query += fmt.Sprintf(" order by to_date(t.effdate, 'dd/mm/yyyy') desc, t.cert, t.name offset %v rows fetch next %v rows only", page*limit, limit)
-	fmt.Printf("QUERY: %s\n\nCNT:%v\n", query, cntQuery)
+	// fmt.Printf("QUERY: %s\n\nCNT:%v\n", query, cntQuery)
 
 	err = s.db.Get(&data.Total, cntQuery)
-	fmt.Printf("DATA: %v\n", data.Total)
+	// fmt.Printf("DATA: %v\n", data.Total)
 	if err != nil || data.Total == 0 {
 		return
 	}

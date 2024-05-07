@@ -1,12 +1,18 @@
 package component
 
-type RowProps struct {
-ID string
-ClassName string
+type GridProps struct {
+	ID        string
+	ClassName string
 }
 
-templ Row(props RowProps) {
-<div id={ props.ID } class={ "row" , props.ClassName }>
-  { children... }
-</div>
+templ Row(props GridProps) {
+	<div id={ props.ID } class={ "row" , props.ClassName }>
+		{ children... }
+	</div>
+}
+
+templ Column(props GridProps) {
+	<div id={ props.ID } class={ "d-flex flex-column" , props.ClassName }>
+		{ children... }
+	</div>
 }
