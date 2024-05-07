@@ -11,6 +11,10 @@ script ShowResults() {
     htmx.removeClass(htmx.find("#results"), "d-none")
 }
 
+script HideResults() {
+    htmx.addClass(htmx.find("#results"), "d-none")
+}
+
 templ ResultCard() {
 	@component.Card(component.CardProps{ID: "results", ClassName: "d-none"}) {
 		<div

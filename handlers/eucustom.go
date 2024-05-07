@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -116,6 +117,7 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 	results.Page = params.Page
 	results.Limit = params.Limit
 	results.Query = strings.ToUpper(params.Holder)
+	fmt.Printf("res: %v", results)
 	if isHtmx {
 		return Render(c, http.StatusOK, eucustom.AeoResults(results))
 	}
