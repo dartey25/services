@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mdoffice/md-services/views/templ/component"
 	"strconv"
+	"strings"
 )
 
 script ShowResults() {
@@ -72,7 +73,7 @@ templ ResultMedia(props ResultMediaProps) {
 			id={ fmt.Sprintf("item-%v", props.Index) }
 			class="mr-sm-3 mb-2 mb-sm-0 text-danger d-flex media-left align-items-center"
 		>
-			{ fmt.Sprintf("%v.", props.Index + 1) }
+			{ fmt.Sprintf("%v.", props.Index ) }
 		</div>
 		<div class="media-body pl-3">
 			for _, row := range props.Rows {
@@ -101,4 +102,8 @@ templ ResultRow(props ResultRowProps) {
 			}
 		</div>
 	</div>
+}
+
+templ HighlightedText(text, stem string) {
+	@templ.Raw(strings.Replace(text, stem, fmt.Sprintf(`<span class="text-uppercase bg-primary-300 search-match">%s</span>`, strings.ToUpper(stem)), -1))
 }

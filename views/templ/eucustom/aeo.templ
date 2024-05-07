@@ -34,7 +34,7 @@ templ AeoForm(props AeoFormProps) {
 		hx-get="/aeo/data"
 		hx-target="#results-body"
 		hx-target-*="#results-body"
-		hx-indicator="#loading-indicator"
+		hx-indicator="#loading-indicator,#results-body, #results-footer"
 		hx-on::before-request={ search.ShowResults() }
 		hx-disabled-elt="this"
 	>
@@ -80,9 +80,9 @@ templ AeoForm(props AeoFormProps) {
 	</form>
 }
 
-templ resultItem(index int, item model.AeoData) {
+templ resultItem(index int, item model.AeoData, query string) {
 	@search.ResultMedia(search.ResultMediaProps{Index: index, Rows: []templ.Component{
-		search.ResultRow(search.ResultRowProps{Label: "Власник", Text: item.Holder}),
+		search.ResultRow(search.ResultRowProps{Label: "Власник", Component: search.HighlightedText(item.Holder, query)}),
 		search.ResultRow(search.ResultRowProps{Label: "Країна видачі", Text: item.IssCountry}),
 		search.ResultRow(search.ResultRowProps{Label: "Митниця",
 			Component: c.Link(c.LinkProps{
@@ -95,20 +95,23 @@ templ resultItem(index int, item model.AeoData) {
 	})
 }
 
-templ AeoResults(data model.AeoPaginatedData) {
-	@search.ResultTotalCounter(data.Total, templ.Attributes{"hx-swap-oob": "outerHTML"})
+templ AeoResults(data *model.AeoPaginatedData) {
+	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
 	@search.ResultMediaList() {
 		for index, item := range data.Data {
-			@resultItem(index, item)
+			@resultItem((data.Page-1)*data.Limit+index+1, item, data.Query)
 		}
 	}
 	@search.ResultFooter() {
-		@search.ShowMoreBtn(templ.Attributes{
-			"hx-get":      "/aeo/data",
-			"hx-target":   "#results-body",
-			"hx-target-*": "#results-body",
-			"hx-include":  "#search-form",
-			"hx-swap":     "beforeend",
-		})
+		if data.TotalPages > data.Page {
+			@search.ShowMoreBtn(templ.Attributes{
+				"hx-get":       fmt.Sprintf("/aeo/data?page=%d", data.Page+1),
+				"hx-target":    "#results-body",
+				"hx-target-*":  "#results-body",
+				"hx-include":   "#search-form",
+				"hx-swap":      "beforeend",
+				"hx-indicator": "#loading-indicator",
+			})
+		}
 	}
 }

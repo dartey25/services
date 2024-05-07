@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"time"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mdoffice/md-services/model"
@@ -70,36 +70,41 @@ func (h *EuCustomHandler) HandleEoriForm(c echo.Context) error {
 	return Render(c, http.StatusOK, eucustom.EoriForm())
 }
 
-func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
-	time.Sleep(time.Second * 4)
-	queryParams := c.QueryParams()
-	holder := c.QueryParam("holder")
-	country := c.QueryParam("country")
-	types := c.QueryParams()["type"]
-	const limit = 25
-	var page int
-	var err error
-	isHtmx := c.Request().Header.Get("HX-Request") == "true"
-
-	if pageStr := c.QueryParam("page"); pageStr != "" {
-		page, err = strconv.Atoi(pageStr)
-		if err != nil {
-			return err
-		}
+func parseAeoQueryParams(c echo.Context, params *model.AeoQueryParams) {
+	if limit, err := strconv.Atoi(c.QueryParam("limit")); limit != 0 && err == nil {
+		params.Limit = limit
+	} else {
+		params.Limit = 25
 	}
 
-	if holder == "" && country == "" && len(types) == 0 {
+	if page, err := strconv.Atoi(c.QueryParam("page")); page != 0 && err == nil {
+		params.Page = page
+	} else {
+		params.Page = 1
+	}
+
+	params.Holder = c.QueryParam("holder")
+	params.Country = c.QueryParam("country")
+	params.AuthTypes = c.QueryParams()["type"]
+}
+
+func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
+	isHtmx := c.Request().Header.Get("HX-Request") == "true"
+	var params model.AeoQueryParams
+	parseAeoQueryParams(c, &params)
+
+	if params.Holder == "" && params.Country == "" && len(params.AuthTypes) == 0 {
 		return Render(c, http.StatusBadRequest, search.Error("at least one is required"))
 	}
 
-	results, err := h.service.GetAeoData(holder, country, types, page, limit)
+	results, err := h.service.GetAeoData(params)
 	if err != nil {
 		return Render(c, http.StatusInternalServerError, search.Error(err.Error()))
 	}
 
 	if u := c.Request().Header.Get("HX-Current-URL"); u != "" {
 		if url, err := url.Parse(u); err == nil {
-			url.RawQuery = queryParams.Encode()
+			url.RawQuery = c.QueryParams().Encode()
 			c.Response().Header().Set("HX-Push-Url", url.String())
 		}
 	}
@@ -108,7 +113,9 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 		return Render(c, http.StatusNotFound, search.NotFound())
 	}
 
-	results.NextPage = page + 1
+	results.Page = params.Page
+	results.Limit = params.Limit
+	results.Query = strings.ToUpper(params.Holder)
 	if isHtmx {
 		return Render(c, http.StatusOK, eucustom.AeoResults(results))
 	}

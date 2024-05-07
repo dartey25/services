@@ -7,11 +7,21 @@ import (
 	"time"
 )
 
+type AeoQueryParams struct {
+	Page      int
+	Limit     int
+	Holder    string
+	Country   string
+	AuthTypes []string
+}
+
 type AeoPaginatedData struct {
-	Data     []AeoData `json:"data" db:"DATA"`
-	Pages    int       `json:"pages"`
-	Total    int       `json:"total" db:"TOTAL"`
-	NextPage int       `json:"nextPage"`
+	Page       int       `json:"page"`
+	Limit      int       `json:"-"`
+	TotalItems int       `json:"totalItems" db:"TOTAL"`
+	TotalPages int       `json:"totalPages"`
+	Data       []AeoData `json:"data" db:"DATA"`
+	Query      string    `json:"-"`
 }
 
 type AeoData struct {

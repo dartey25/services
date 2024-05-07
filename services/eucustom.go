@@ -26,28 +26,28 @@ func (s *EuCustomService) GetCountries() (countries []string, err error) {
 	return
 }
 
-func (s *EuCustomService) GetAeoData(holder, country string, types []string, page, limit int) (data model.AeoPaginatedData, err error) {
+func (s *EuCustomService) GetAeoData(q model.AeoQueryParams) (*model.AeoPaginatedData, error) {
 	var whereTypesClause string
 	var whereClause string
 
-	if holder != "" {
-		whereClause += fmt.Sprintf("upper(t.name) LIKE '%%%s%%'", strings.ToUpper(holder))
+	if q.Holder != "" {
+		whereClause += fmt.Sprintf("upper(t.name) LIKE '%%%s%%'", strings.ToUpper(q.Holder))
 	}
 
-	if country != "" {
+	if q.Country != "" {
 		if whereClause != "" {
 			whereClause += " and "
 		}
-		whereClause += fmt.Sprintf("upper(t.cnt) LIKE '%s%%'", strings.ToUpper(country))
+		whereClause += fmt.Sprintf("upper(t.cnt) LIKE '%s%%'", strings.ToUpper(q.Country))
 	}
 
-	if typeCnt := len(types); typeCnt == 1 {
+	if typeCnt := len(q.AuthTypes); typeCnt == 1 {
 		if whereClause != "" {
 			whereClause += " and "
 		}
-		whereClause += fmt.Sprintf("upper(t.cert) LIKE '%s%%'", strings.ToUpper(types[0]))
+		whereClause += fmt.Sprintf("upper(t.cert) LIKE '%s%%'", strings.ToUpper(q.AuthTypes[0]))
 	} else if typeCnt == 2 {
-		for index, value := range types {
+		for index, value := range q.AuthTypes {
 			if whereTypesClause != "" {
 				whereTypesClause += " union "
 			}
@@ -70,23 +70,21 @@ func (s *EuCustomService) GetAeoData(holder, country string, types []string, pag
 		query += fmt.Sprintf("where %s", whereClause)
 		cntQuery += fmt.Sprintf("where %s", whereClause)
 	}
+	query += fmt.Sprintf(" order by to_date(t.effdate, 'dd/mm/yyyy') desc, t.cert, t.name offset %v rows fetch next %v rows only", (q.Page-1)*q.Limit, q.Limit)
 
-	query += fmt.Sprintf(" order by to_date(t.effdate, 'dd/mm/yyyy') desc, t.cert, t.name offset %v rows fetch next %v rows only", page*limit, limit)
-	// fmt.Printf("QUERY: %s\n\nCNT:%v\n", query, cntQuery)
-
-	err = s.db.Get(&data.Total, cntQuery)
-	// fmt.Printf("DATA: %v\n", data.Total)
-	if err != nil || data.Total == 0 {
-		return
+	var data model.AeoPaginatedData
+	err := s.db.Get(&data.TotalItems, cntQuery)
+	if err != nil || data.TotalItems == 0 {
+		return nil, err
 	}
+	data.TotalPages = data.TotalItems / q.Limit
 
 	err = s.db.Select(&data.Data, query)
 	if err != nil {
-		fmt.Printf("DB ERR %s\n", err.Error())
-		return
+		return nil, err
 	}
-	data.Pages = data.Total / limit
-	return
+
+	return &data, nil
 }
 
 func (s *EuCustomService) ValidateEori(code string) (data []model.EoriResult, err error) {
