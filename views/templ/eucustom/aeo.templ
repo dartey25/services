@@ -71,14 +71,15 @@ templ AeoForm(props AeoFormProps) {
 		@form.BtnGroup(form.BtnGroupProps{Buttons: []templ.Component{
 			c.Button(c.ButtonProps{
 				Text: "Знайти", Variant: "primary", Type: "submit", Icon: "search4", ClassName: "mr-2"}),
-			c.Button(c.ButtonProps{Text: "Очистити", Variant: "light", Attributes: templ.Attributes{
-				"hx-get":                "/aeo/form",
-				"hx-target":             "#search-form",
-				"hx-swap":               "outerHTML",
-				"hx-on::before-request": `htmx.addClass(htmx.find("#results"), "d-none")`,
-			}}),
+			c.Button(c.ButtonProps{Text: "Очистити", Variant: "light", OnClick: resetForm("#search-form")}),
 		}})
 	</form>
+}
+
+script resetForm(selector string) {
+  event.preventDefault()
+  htmx.find(selector).reset()
+  htmx.addClass(htmx.find("#results"), "d-none")
 }
 
 templ resultItem(index int, item model.AeoData, query string) {

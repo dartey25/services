@@ -15,5 +15,5 @@ templ Index() {
 }
 
 templ tabsLayout() {
-	<div id="tabs" hx-get="/aeo" hx-trigger="load" hx-target="#tabs" hx-swap="innerHTML"></div>
+	<div id="tabs" hx-get="/aeo" hx-trigger="load" hx-target="#tabs" hx-swap="innerHTML" hx-on::after-request={ search.HideResults() }></div>
 }

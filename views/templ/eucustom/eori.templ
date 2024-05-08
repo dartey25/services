@@ -22,9 +22,10 @@ templ EoriTab() {
 templ EoriForm() {
 	<form
 		hx-get="/eori/data"
-		hx-target="#results"
-		hx-indicator="#indicator, #results"
-		hx-disabled-elt="#eoriInput, #eoriSubmitBtn"
+		hx-target="#results-body"
+		hx-target-*="#results-body"
+		hx-indicator="#loading-indicator,#results-body, #results-footer"
+		hx-disabled-elt="this"
 		hx-on::before-request={ search.ShowResults() }
 	>
 		@form.Group() {
@@ -39,39 +40,29 @@ templ EoriForm() {
 	</form>
 }
 
-templ EoriResults(data model.EoriDisplayResult) {
-	@resultsTable() {
-		<tr>
-			<td>{ data.Eori }</td>
-			if data.Status == 0 {
-				<td>
-					<div class="badge badge-success">Дійсний</div>
-				</td>
-			} else {
-				<td>
-					<div class="badge badge-warning">Недійсний</div>
-				</td>
-			}
-			<td>{ data.Name }</td>
-			<td>{ data.Address }</td>
-		</tr>
+templ Badge(data model.EoriDisplayResult) {
+	if data.Status == 0 {
+		<td>
+			<div class="badge badge-success">Дійсний</div>
+		</td>
+	} else {
+		<td>
+			<div class="badge badge-warning">Недійсний</div>
+		</td>
 	}
 }
 
-templ resultsTable() {
-	<div class="card card-light table-responsive">
-		<table class="table">
-			<thead class="card-header bg-light border-color-brand border-bottom-2">
-				<tr>
-					<th>Код</th>
-					<th>Статус</th>
-					<th>Назва</th>
-					<th>Адреса</th>
-				</tr>
-			</thead>
-			<tbody>
-				{ children... }
-			</tbody>
-		</table>
-	</div>
+templ EoriResults(data model.EoriDisplayResult) {
+	@search.ResultTotalCounter(1, templ.Attributes{"hx-swap-oob": "outerHTML"})
+	@search.ResultMediaList() {
+		@search.ResultMedia(search.ResultMediaProps{Index: 1, Rows: []templ.Component{
+			search.ResultRow(search.ResultRowProps{Label: "Код", Text: data.Eori}),
+			search.ResultRow(search.ResultRowProps{Label: "Статус", Component: Badge(data)}),
+			search.ResultRow(search.ResultRowProps{Label: "Назва",
+				Text: data.Name}),
+			search.ResultRow(search.ResultRowProps{Label: "Адреса", Text: data.Address}),
+		},
+		})
+	}
+	@search.ResultFooter()
 }

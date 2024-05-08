@@ -10,12 +10,14 @@ type TabItemProps struct {
 	Text        string
 	ContentLink string
 	IsActive    bool
+	Attributes  templ.Attributes
 }
 
 templ TabItem(props TabItemProps) {
 	<li
 		hx-get={ props.ContentLink }
 		hx-trigger="click"
+		{ props.Attributes... }
 		role="tab"
 		aria-selected?={ props.IsActive }
 		aria-controls="tab-content"

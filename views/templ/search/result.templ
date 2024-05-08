@@ -8,11 +8,13 @@ import (
 )
 
 script ShowResults() {
+    console.log("1")
     htmx.removeClass(htmx.find("#results"), "d-none")
 }
 
 script HideResults() {
     htmx.addClass(htmx.find("#results"), "d-none")
+    htmx.find("#results-body").innerHTML = ""
 }
 
 templ ResultCard() {

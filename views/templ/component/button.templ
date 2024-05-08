@@ -10,6 +10,7 @@ type ButtonProps struct {
 	Icon       string
 	Type       string
 	Attributes templ.Attributes
+	OnClick    templ.ComponentScript
 }
 
 templ Button(props ButtonProps) {
@@ -20,6 +21,7 @@ templ Button(props ButtonProps) {
 		if props.Type !="" {
 			type={ props.Type }
 		}
+		onclick={ props.OnClick }
 		class={ "btn" , fmt.Sprintf("btn-%s",
   props.Variant), props.ClassName }
 		{ props.Attributes... }

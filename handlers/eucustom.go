@@ -3,9 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mdoffice/md-services/model"
@@ -103,12 +103,12 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 		return Render(c, http.StatusInternalServerError, search.Error(err.Error()))
 	}
 
-	if u := c.Request().Header.Get("HX-Current-URL"); u != "" {
-		if url, err := url.Parse(u); err == nil {
-			url.RawQuery = c.QueryParams().Encode()
-			c.Response().Header().Set("HX-Push-Url", url.String())
-		}
-	}
+	// if u := c.Request().Header.Get("HX-Current-URL"); u != "" {
+	// 	if url, err := url.Parse(u); err == nil {
+	// 		url.RawQuery = c.QueryParams().Encode()
+	// 		c.Response().Header().Set("HX-Push-Url", url.String())
+	// 	}
+	// }
 
 	if len(results.Data) == 0 {
 		return Render(c, http.StatusNotFound, search.NotFound())
@@ -125,6 +125,7 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 }
 
 func (h *EuCustomHandler) HandleGetEoriData(c echo.Context) error {
+	time.Sleep(time.Second * 4)
 	eori := c.QueryParam("code")
 	data, err := h.service.ValidateEori(eori)
 	if err != nil {
