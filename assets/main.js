@@ -1,0 +1,1 @@
+(()=>{"use strict";$((function(){!function(c){try{$(c).select2()}catch(t){console.error("failed to init select2 on ".concat(c,": ").concat(t))}}("#country-select")}))})();

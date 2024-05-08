@@ -29,6 +29,8 @@ func main() {
 	app := echo.New()
 	app.Use(middleware.Recover())
 	app.Use(middleware.Logger())
+	app.Use(middleware.CORS())
+	// AllowOrigins: []string{"https://www.mdoffice.com.ua"},
 	app.Use(middleware.Gzip())
 	app.Static("/static", "assets")
 

@@ -2,6 +2,8 @@ bin
 tmp
 dist
 *_templ.go
+assets/index.min.css
+assets/fonts
 
 node_modules
 

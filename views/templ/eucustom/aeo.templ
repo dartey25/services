@@ -45,7 +45,7 @@ templ AeoForm(props AeoFormProps) {
 		@form.Group() {
 			@form.Label("Країна видачі")
 			<div class="col-sm-4">
-				<select id="countrySelect" class="form-control" name="country">
+				<select id="country-select" class="form-control" name="country">
 					for _, country := range props.CountryList {
 						if country == props.Country {
 							<option value={ country } selected>{ country }</option>

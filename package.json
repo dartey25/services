@@ -1,0 +1,36 @@
+{
+  "name": "my-webpack-project",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@webpack-cli/generators": "^3.0.7",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^7.1.1",
+    "mini-css-extract-plugin": "^2.9.0",
+    "prettier": "^3.2.5",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-import-css": "^3.5.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@mdoffice/md-ui": "^2.6.15",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "bootstrap": "5.3.3",
+    "core-js": "^3.37.0",
+    "htmx.org": "^1.9.12",
+    "jquery": "^3.7.1",
+    "select2": "^4.1.0-rc.0"
+  },
+  "description": "My webpack project"
+}

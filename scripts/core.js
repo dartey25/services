@@ -1,0 +1,9 @@
+import "@mdoffice/md-ui/css/bootstrap.css";
+import "@mdoffice/md-ui/css/bootstrap_limitless.css";
+import "@mdoffice/md-ui/css/cci.color.css";
+import "@mdoffice/md-ui/css/icomoon.css";
+import "@mdoffice/md-ui/css/layout.css";
+import "@mdoffice/md-ui/css/components.css";
+import "@mdoffice/md-ui/css/colors.css";
+import "@mdoffice/md-ui/css/limitless.datepicker.css";
+import "htmx.org";
