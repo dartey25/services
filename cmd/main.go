@@ -49,6 +49,7 @@ func main() {
 	app.GET("/eori/form", e.HandleEoriForm)
 	app.GET("/aeo/data", e.HandleGetAeoData)
 	app.GET("/eori/data", e.HandleGetEoriData)
+	app.GET("/joker/eori/validate", e.HandleJokerEoriData)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

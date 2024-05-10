@@ -7,6 +7,15 @@ import (
 	"strings"
 )
 
+script ShowResults() {
+    htmx.removeClass(htmx.find("#results"), "d-none")
+}
+
+script HideResults() {
+    htmx.addClass(htmx.find("#results"), "d-none")
+    htmx.find("#results-body").innerHTML = ""
+}
+
 templ ResultCard() {
 	@component.Card(component.CardProps{ID: "results", ClassName: "d-none"}) {
 		<div
@@ -70,7 +79,6 @@ templ ResultMedia(props ResultMediaProps) {
 			class="mr-sm-3 mb-2 mb-sm-0 text-danger d-flex media-left align-items-center"
 		>
 			{ fmt.Sprintf("%v.", props.Index ) }
-			<button class="btn btn-primary" onclick="toast('My first toast')">Copy</button>
 		</div>
 		<div class="media-body pl-3">
 			for _, row := range props.Rows {

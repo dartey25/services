@@ -1,4 +1,4 @@
-// import "./core";
+import "./core";
 import "./style.css";
 // import $ from "jquery";
 

@@ -7,11 +7,13 @@ import (
 templ Layout() {
 	<html>
 		<head>
+			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 			<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
-			<script src="/static/main.js"></script>
-			<link href="/static/main.css" rel="stylesheet" type="text/css"/>
+			<script src="/static/js/index.min.js"></script>
+			<link href="/static/css/index.min.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
 			@navbar()

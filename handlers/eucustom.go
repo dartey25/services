@@ -142,5 +142,5 @@ func (h *EuCustomHandler) HandleJokerEoriData(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, model.NewApiResponse(data))
+	return c.XML(http.StatusOK, model.NewApiResponse(data))
 }
