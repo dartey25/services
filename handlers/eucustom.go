@@ -139,7 +139,7 @@ func (h *EuCustomHandler) HandleJokerEoriData(c echo.Context) error {
 	eori := c.QueryParam("code")
 	data, err := h.service.ValidateEori(eori)
 	if err != nil {
-		return err
+		return c.XML(http.StatusBadRequest, model.NewApiError(err.Error()))
 	}
 
 	return c.XML(http.StatusOK, model.NewApiResponse(data))
