@@ -32,9 +32,9 @@ func parseId(s string) *model.Identificator {
 	return &id
 }
 
-func ParseLegal() ([]*model.SanctionsRow, error) {
+func (s *SanctionsService) ParseLegal(filePath string) ([]*model.SanctionsRow, error) {
 	timeBegin := time.Now()
-	f, err := excelize.OpenFile("legal_sanctions.xlsx")
+	f, err := excelize.OpenFile(filePath)
 	if err != nil {
 		return nil, err
 	}
@@ -139,4 +139,26 @@ func parseRows(r [][]string) []*model.SanctionsRow {
 	}
 
 	return rows
+}
+
+func (s *SanctionsService) ReCreateIndex(indexName string) error {
+	if _, err := s.es.Indices.Delete([]string{indexName}); err != nil {
+		// log.Fatalf("Cannot delete index: %s", err)
+		return err
+	}
+	res, err := s.es.Indices.Create(indexName)
+	if err != nil {
+		// log.Fatalf("Cannot create index: %s", err)
+		return err
+	}
+	if res.IsError() {
+		// log.Fatalf("Cannot create index: %s", res)
+		return err
+	}
+
+	return nil
+}
+
+func (s *SanctionsService) UploadInBatches(items []*model.SanctionsRow, indexName string) error {
+	return nil
 }

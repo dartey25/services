@@ -20,7 +20,7 @@ export default {
       ],
     }),
   ],
-  input: { "js/index": "scripts/main.js" },
+  input: { "js/index": "web/scripts/main.js" },
   external: ["jquery", "htmx.org"],
   output: {
     name: "bundle",

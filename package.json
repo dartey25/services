@@ -1,7 +1,7 @@
 {
-  "name": "my-webpack-project",
+  "name": "md-services",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "build2": "rollup -c",
@@ -33,6 +33,5 @@
     "htmx.org": "^1.9.12",
     "jquery": "^3.7.1",
     "select2": "^4.1.0-rc.0"
-  },
-  "description": "My webpack project"
+  }
 }

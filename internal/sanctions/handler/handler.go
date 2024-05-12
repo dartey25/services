@@ -16,6 +16,22 @@ func NewSanctionsHandler(s *service.SanctionsService) *SanctionsHandler {
 }
 
 func (h *SanctionsHandler) HandleParseLegal(c echo.Context) error {
+	sanctions, err := h.svc.ParseLegal("path_to_file")
+	if err != nil {
+		c.Logger().Errorf("Error parsing sanctions file: %s", err)
+		return err
+	}
+
+	err = h.svc.ReCreateIndex("index_name")
+	if err != nil {
+		return err
+	}
+
+	h.svc.UploadInBatches(&sanctions)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

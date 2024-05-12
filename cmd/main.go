@@ -14,8 +14,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	cfg "github.com/mdoffice/md-services/config"
 	database "github.com/mdoffice/md-services/internal/db"
-	euHandler "github.com/mdoffice/md-services/internal/eucustoms/handler"
-	euService "github.com/mdoffice/md-services/internal/eucustoms/service"
 	sanctHandler "github.com/mdoffice/md-services/internal/sanctions/handler"
 	sanctService "github.com/mdoffice/md-services/internal/sanctions/service"
 )
@@ -27,14 +25,15 @@ func main() {
 		log.Fatal(fmt.Errorf("error reading config: %s", err.Error()))
 		os.Exit(1)
 	}
-	db, err := database.NewOracleClient(&cfg.Database)
+	// db, err := database.NewOracleClient(&cfg.Database)
+	// if err != nil {
+	// 	log.Fatalf("Error connecting to Oracle: %v", err)
+	// }
+	// defer db.Close()
+	fmt.Println(1)
+	es, err := database.NewElasticClient(&cfg.Elastic)
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	es, err := database.NewESClient(&cfg.Elastic)
-	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error connecting to Elastic: %v", err)
 	}
 
 	app := echo.New()
@@ -43,23 +42,30 @@ func main() {
 	app.Use(middleware.CORS())
 	// AllowOrigins: []string{"https://www.mdoffice.com.ua"},
 	app.Use(middleware.Gzip())
+	app.Pre(middleware.Rewrite(map[string]string{
+		"/services/*": "/$1",
+	}))
 	app.Static("/static", "assets")
 
-	s := euService.NewEuCustomService(db)
-	e := euHandler.NewEuCustomHandler(s)
-	app.GET("/", e.HandleIndex)
-	app.GET("/aeo", e.HandleAeoTab)
-	app.GET("/aeo/form", e.HandleAeoForm)
-	app.GET("/eori", e.HandleEoriTab)
-	app.GET("/eori/form", e.HandleEoriForm)
-	app.GET("/aeo/data", e.HandleGetAeoData)
-	app.GET("/eori/data", e.HandleGetEoriData)
-	app.GET("/joker/eori/validate", e.HandleJokerEoriData)
+	// euGroup := app.Group("/eucustom", middleware.Rewrite(map[string]string{
+	// 	fmt.Sprintf("/%s/*", cfg.Server.Prefix): "/$1",
+	// }))
+	// s := euService.NewEuCustomService(db)
+	// e := euHandler.NewEuCustomHandler(s)
+	// euGroup.GET("/", e.HandleIndex)
+	// euGroup.GET("/aeo", e.HandleAeoTab)
+	// euGroup.GET("/aeo/form", e.HandleAeoForm)
+	// euGroup.GET("/eori", e.HandleEoriTab)
+	// euGroup.GET("/eori/form", e.HandleEoriForm)
+	// euGroup.GET("/aeo/data", e.HandleGetAeoData)
+	// euGroup.GET("/eori/data", e.HandleGetEoriData)
+	// app.GET("/joker/eori/validate", e.HandleJokerEoriData)
 
+	sGroup := app.Group("/sanctions")
 	ss := sanctService.NewSanctionsService(es)
 	ess := sanctHandler.NewSanctionsHandler(ss)
-	app.GET("/sanctions/parse", ess.HandleParseLegal)
-	app.GET("/sanctions/query", ess.HandleQueryLegal)
+	sGroup.GET("/parse", ess.HandleParseLegal)
+	sGroup.GET("/query", ess.HandleQueryLegal)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

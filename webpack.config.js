@@ -3,7 +3,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const stylesHandler = MiniCssExtractPlugin.loader;
 const config = {
-  entry: "./scripts/main.js",
+  entry: "./web/scripts/main.js",
   output: {
     path: path.resolve(__dirname, "assets"),
   },

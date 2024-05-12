@@ -4,6 +4,7 @@ go 1.22.2
 
 require (
 	github.com/a-h/templ v0.2.663
+	github.com/dustin/go-humanize v1.0.1
 	github.com/elastic/go-elasticsearch/v8 v8.13.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jmoiron/sqlx v1.4.0

@@ -1,14 +1,14 @@
 package service
 
 import (
-	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/mdoffice/md-services/internal/db"
 )
 
 type SanctionsService struct {
-	es *elasticsearch.Client
+	es *db.ElasticClient
 }
 
-func NewSanctionsService(e *elasticsearch.Client) *SanctionsService {
+func NewSanctionsService(e *db.ElasticClient) *SanctionsService {
 	return &SanctionsService{
 		es: e,
 	}

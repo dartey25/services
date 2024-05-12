@@ -16,8 +16,9 @@ type DatabaseConfig struct {
 }
 
 type ServerConfig struct {
-	Host string `yaml:"host" env:"HOST" env-default:"localhost"`
-	Port uint   `yaml:"port" env:"PORT" env-default:"42069"`
+	Host   string `yaml:"host" env:"HOST" env-default:"localhost"`
+	Port   uint   `yaml:"port" env:"PORT" env-default:"42069"`
+	Prefix string `yaml:"prefix" env:"PREFIX" env-default:"services"`
 }
 
 type ElasticConfig struct {
