@@ -1,4 +1,4 @@
-package services
+package service
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/mdoffice/md-services/model"
+	"github.com/mdoffice/md-services/internal/eucustoms/model"
 )
 
 type EuCustomService struct {

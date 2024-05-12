@@ -12,18 +12,29 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/mdoffice/md-services/db"
-	"github.com/mdoffice/md-services/handlers"
-	"github.com/mdoffice/md-services/model"
-	"github.com/mdoffice/md-services/services"
+	cfg "github.com/mdoffice/md-services/config"
+	database "github.com/mdoffice/md-services/internal/db"
+	euHandler "github.com/mdoffice/md-services/internal/eucustoms/handler"
+	euService "github.com/mdoffice/md-services/internal/eucustoms/service"
+	sanctHandler "github.com/mdoffice/md-services/internal/sanctions/handler"
+	sanctService "github.com/mdoffice/md-services/internal/sanctions/service"
 )
 
 func main() {
-	var cfg model.Config
+	var cfg cfg.Config
 	err := cleanenv.ReadConfig("config.yaml", &cfg)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error reading config: %s", err.Error()))
 		os.Exit(1)
+	}
+	db, err := database.NewOracleClient(&cfg.Database)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	es, err := database.NewESClient(&cfg.Elastic)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	app := echo.New()
@@ -34,14 +45,8 @@ func main() {
 	app.Use(middleware.Gzip())
 	app.Static("/static", "assets")
 
-	db, err := db.New(&cfg.Database)
-	if err != nil {
-		app.Logger.Fatal(err)
-	}
-	defer db.Close()
-
-	s := services.NewEuCustomService(db)
-	e := handlers.NewEuCustomHandler(s)
+	s := euService.NewEuCustomService(db)
+	e := euHandler.NewEuCustomHandler(s)
 	app.GET("/", e.HandleIndex)
 	app.GET("/aeo", e.HandleAeoTab)
 	app.GET("/aeo/form", e.HandleAeoForm)
@@ -50,6 +55,11 @@ func main() {
 	app.GET("/aeo/data", e.HandleGetAeoData)
 	app.GET("/eori/data", e.HandleGetEoriData)
 	app.GET("/joker/eori/validate", e.HandleJokerEoriData)
+
+	ss := sanctService.NewSanctionsService(es)
+	ess := sanctHandler.NewSanctionsHandler(ss)
+	app.GET("/sanctions/parse", ess.HandleParseLegal)
+	app.GET("/sanctions/query", ess.HandleQueryLegal)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

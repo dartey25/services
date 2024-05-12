@@ -1,12 +1,12 @@
 package eucustom
 
 import (
-	"github.com/mdoffice/md-services/model"
-	c "github.com/mdoffice/md-services/views/templ/component"
-	"github.com/mdoffice/md-services/views/templ/component/form"
-	"github.com/mdoffice/md-services/views/templ/search"
+	c "github.com/mdoffice/md-services/web/views/component"
+	"github.com/mdoffice/md-services/web/views/component/form"
+	"github.com/mdoffice/md-services/web/views/search"
 	"strings"
 	"fmt"
+	"github.com/mdoffice/md-services/internal/eucustoms/model"
 )
 
 templ AeoTab(props AeoFormProps) {
@@ -77,9 +77,9 @@ templ AeoForm(props AeoFormProps) {
 }
 
 script resetForm(selector string) {
-  event.preventDefault()
-  htmx.find(selector).reset()
-  htmx.addClass(htmx.find("#results"), "d-none")
+event.preventDefault()
+htmx.find(selector).reset()
+htmx.addClass(htmx.find("#results"), "d-none")
 }
 
 templ resultItem(index int, item model.AeoData, query string) {
@@ -88,7 +88,8 @@ templ resultItem(index int, item model.AeoData, query string) {
 		search.ResultRow(search.ResultRowProps{Label: "Країна видачі", Text: item.IssCountry}),
 		search.ResultRow(search.ResultRowProps{Label: "Митниця",
 			Component: c.Link(c.LinkProps{
-				Href:   fmt.Sprintf("https://ec.europa.eu/taxation_customs/dds2/rd/rd_details.jsp?Lang=EN&DesLang=EN&RefNum=%s", item.CusCode),
+				Href: fmt.Sprintf("https://ec.europa.eu/taxation_customs/dds2/rd/rd_details.jsp?Lang=EN&DesLang=EN&RefNum=%s",
+					item.CusCode),
 				Text:   item.CusCode,
 				Target: "_blank"})}),
 		search.ResultRow(search.ResultRowProps{Label: "Тип уповноваження", Text: item.AuthType}),

@@ -8,22 +8,24 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mdoffice/md-services/model"
-	"github.com/mdoffice/md-services/services"
-	"github.com/mdoffice/md-services/views/templ/eucustom"
-	"github.com/mdoffice/md-services/views/templ/search"
+	core "github.com/mdoffice/md-services/internal/core/handler"
+	coreModel "github.com/mdoffice/md-services/internal/core/model"
+	"github.com/mdoffice/md-services/internal/eucustoms/model"
+	"github.com/mdoffice/md-services/internal/eucustoms/service"
+	"github.com/mdoffice/md-services/web/views/eucustom"
+	"github.com/mdoffice/md-services/web/views/search"
 )
 
 type EuCustomHandler struct {
-	service *services.EuCustomService
+	service *service.EuCustomService
 }
 
-func NewEuCustomHandler(s *services.EuCustomService) *EuCustomHandler {
+func NewEuCustomHandler(s *service.EuCustomService) *EuCustomHandler {
 	return &EuCustomHandler{service: s}
 }
 
 func (h *EuCustomHandler) HandleIndex(c echo.Context) error {
-	return Render(c, http.StatusOK, eucustom.Index())
+	return core.Render(c, http.StatusOK, eucustom.Index())
 }
 
 func (h *EuCustomHandler) HandleAeoTab(c echo.Context) error {
@@ -42,11 +44,11 @@ func (h *EuCustomHandler) HandleAeoTab(c echo.Context) error {
 		}
 	}
 
-	return Render(c, http.StatusOK, eucustom.AeoTab(eucustom.AeoFormProps{Types: types}))
+	return core.Render(c, http.StatusOK, eucustom.AeoTab(eucustom.AeoFormProps{Types: types}))
 }
 
 func (h *EuCustomHandler) HandleEoriTab(c echo.Context) error {
-	return Render(c, http.StatusOK, eucustom.EoriTab())
+	return core.Render(c, http.StatusOK, eucustom.EoriTab())
 }
 
 func (h *EuCustomHandler) HandleAeoForm(c echo.Context) error {
@@ -64,11 +66,11 @@ func (h *EuCustomHandler) HandleAeoForm(c echo.Context) error {
 			}
 		}
 	}
-	return Render(c, http.StatusOK, eucustom.AeoForm(eucustom.AeoFormProps{Types: types}))
+	return core.Render(c, http.StatusOK, eucustom.AeoForm(eucustom.AeoFormProps{Types: types}))
 }
 
 func (h *EuCustomHandler) HandleEoriForm(c echo.Context) error {
-	return Render(c, http.StatusOK, eucustom.EoriForm())
+	return core.Render(c, http.StatusOK, eucustom.EoriForm())
 }
 
 func parseAeoQueryParams(c echo.Context, params *model.AeoQueryParams) {
@@ -95,12 +97,12 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 	parseAeoQueryParams(c, &params)
 
 	if params.Holder == "" && params.Country == "" && len(params.AuthTypes) == 0 {
-		return Render(c, http.StatusBadRequest, search.Error("at least one is required"))
+		return core.Render(c, http.StatusBadRequest, search.Error("at least one is required"))
 	}
 
 	results, err := h.service.GetAeoData(params)
 	if err != nil {
-		return Render(c, http.StatusInternalServerError, search.Error(err.Error()))
+		return core.Render(c, http.StatusInternalServerError, search.Error(err.Error()))
 	}
 
 	// if u := c.Request().Header.Get("HX-Current-URL"); u != "" {
@@ -111,7 +113,7 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 	// }
 
 	if len(results.Data) == 0 {
-		return Render(c, http.StatusNotFound, search.NotFound())
+		return core.Render(c, http.StatusNotFound, search.NotFound())
 	}
 
 	results.Page = params.Page
@@ -119,7 +121,7 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 	results.Query = strings.ToUpper(params.Holder)
 	fmt.Printf("res: %v", results)
 	if isHtmx {
-		return Render(c, http.StatusOK, eucustom.AeoResults(results))
+		return core.Render(c, http.StatusOK, eucustom.AeoResults(results))
 	}
 	return c.JSON(http.StatusOK, results)
 }
@@ -129,18 +131,18 @@ func (h *EuCustomHandler) HandleGetEoriData(c echo.Context) error {
 	eori := c.QueryParam("code")
 	data, err := h.service.ValidateEori(eori)
 	if err != nil {
-		return Render(c, http.StatusOK, search.Error(err.Error()))
+		return core.Render(c, http.StatusOK, search.Error(err.Error()))
 	}
 
-	return Render(c, http.StatusOK, eucustom.EoriResults(model.NewEoriDisplayResult(data[0])))
+	return core.Render(c, http.StatusOK, eucustom.EoriResults(model.NewEoriDisplayResult(data[0])))
 }
 
 func (h *EuCustomHandler) HandleJokerEoriData(c echo.Context) error {
 	eori := c.QueryParam("code")
 	data, err := h.service.ValidateEori(eori)
 	if err != nil {
-		return c.XML(http.StatusBadRequest, model.NewApiError(err.Error()))
+		return c.XML(http.StatusBadRequest, coreModel.NewApiError(err.Error()))
 	}
 
-	return c.XML(http.StatusOK, model.NewApiResponse(data))
+	return c.XML(http.StatusOK, coreModel.NewApiResponse(data))
 }

@@ -1,8 +1,9 @@
-package model
+package config
 
 type Config struct {
-	Database DatabaseConfig `yaml:"database" env-prefix:"DB_"`
 	Server   ServerConfig   `yaml:"server" env-prefix:"SERVER_"`
+	Database DatabaseConfig `yaml:"database" env-prefix:"DB_"`
+	Elastic  ElasticConfig  `yaml:"elastic" env-prefix:"ES_"`
 	LogLevel string         `yaml:"log-level" env:"LOG_LEVEL" env-default:"INFO"`
 }
 
@@ -17,4 +18,11 @@ type DatabaseConfig struct {
 type ServerConfig struct {
 	Host string `yaml:"host" env:"HOST" env-default:"localhost"`
 	Port uint   `yaml:"port" env:"PORT" env-default:"42069"`
+}
+
+type ElasticConfig struct {
+	Port     int    `yaml:"port" env:"PORT" env-default:"9200"`
+	Host     string `yaml:"host" env:"HOST" env-default:"localhost"`
+	CertPath string `yaml:"cert_path" env:"CERT_PATH"`
+	ApiKey   string `yaml:"api_key" env:"API_KEY"`
 }

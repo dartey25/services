@@ -1,0 +1,111 @@
+package search
+
+import (
+"fmt"
+"github.com/mdoffice/md-services/web/views/component"
+"strconv"
+"strings"
+)
+
+script ShowResults() {
+htmx.removeClass(htmx.find("#results"), "d-none")
+}
+
+script HideResults() {
+htmx.addClass(htmx.find("#results"), "d-none")
+htmx.find("#results-body").innerHTML = ""
+}
+
+templ ResultCard() {
+@component.Card(component.CardProps{ID: "results", ClassName: "d-none"}) {
+<div id="results-header"
+  class="card-header bg-light border-color-brand border-bottom-2 header-elements-inline header-elements-inline">
+  <h6 class="card-title">Результати пошуку</h6>
+  <div class="header-elements text-muted font-weight-semibold d-none">
+    <span class="mr-2">Знайдено:</span>
+    <span id="results-total"></span>
+  </div>
+</div>
+<div id="results-body" class="card-body p-0"></div>
+@component.LoadingIndicator()
+<div id="results-footer"></div>
+}
+}
+
+templ ResultFooter() {
+<div id="results-footer" class="card-footer text-center" hx-swap-oob="outerHTML">
+  { children... }
+</div>
+}
+
+templ ShowMoreBtn(attributes templ.Attributes) {
+@component.Button(component.ButtonProps{
+Text: "Показати ще", Variant: "link", Icon: "spinner11", ClassName: "p-0", Attributes: attributes,
+})
+}
+
+templ Error(message string) {
+<span id="results-total" hx-swap-oob="outerHTML">0</span>
+@component.Alert(component.AlertProps{Text: message, Variant: "danger", ClassName: "m-3"})
+}
+
+templ NotFound() {
+<span id="results-total" hx-swap-oob="outerHTML">0</span>
+@component.Alert(component.AlertProps{Text: "На жаль, нічого не знайдено :(", Variant: "info", ClassName: "m-3"})
+}
+
+templ ResultTotalCounter(total int, attributes templ.Attributes) {
+<span id="results-total" { attributes... }>{ strconv.Itoa(total) }</span>
+}
+
+templ ResultMediaList() {
+<ul class="media-list">
+  { children... }
+</ul>
+}
+
+type ResultMediaProps struct {
+ID string
+Index int
+Rows []templ.Component
+}
+
+templ ResultMedia(props ResultMediaProps) {
+<li class="media card-body py-1">
+  <div id={ fmt.Sprintf("item-%v", props.Index) }
+    class="mr-sm-3 mb-2 mb-sm-0 text-danger d-flex media-left align-items-center">
+    { fmt.Sprintf("%v.", props.Index ) }
+  </div>
+  <div class="media-body pl-3">
+    for _, row := range props.Rows {
+    @row
+    }
+  </div>
+</li>
+}
+
+type ResultRowProps struct {
+Label string
+Text string
+Component templ.Component
+}
+
+templ ResultRow(props ResultRowProps) {
+<div class="row">
+  <div class="col-sm-3 col-lg-2 text-right header-col">
+    <span class="font-weight-semibold">{ fmt.Sprintf("%s:", props.Label) }</span>
+  </div>
+  <div class="col-sm-9 col-lg-10 text-col">
+    if props.Component != nil {
+    @props.Component
+    } else if props.Text != "" {
+    { props.Text }
+    }
+  </div>
+</div>
+}
+
+templ HighlightedText(text, stem string) {
+@templ.Raw(strings.Replace(text, stem, fmt.Sprintf(`<span class="text-uppercase bg-primary-300 search-match">%s</span>`,
+strings.ToUpper(stem)), -1))
+}
