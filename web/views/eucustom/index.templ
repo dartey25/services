@@ -1,20 +1,26 @@
 package eucustom
 
 import (
-"github.com/mdoffice/md-services/web/views/layout"
-"github.com/mdoffice/md-services/web/views/search"
+	"github.com/mdoffice/md-services/web/views/layout"
+	"github.com/mdoffice/md-services/web/views/search"
 )
 
 templ Index() {
-@layout.Layout() {
-@layout.MainCard(layout.MainCardProps{Tabs: tabsLayout()}) {
-<div id="tab-content"></div>
-}
-@search.ResultCard()
-}
+	@layout.Layout() {
+		@layout.MainCard(layout.MainCardProps{Tabs: tabsLayout()}) {
+			<div id="tab-content"></div>
+		}
+		@search.ResultCard(search.ResultCardProps{IsTable: true})
+	}
 }
 
 templ tabsLayout() {
-<div id="tabs" hx-get="/services/eucustom/aeo" hx-trigger="load" hx-target="#tabs" hx-swap="innerHTML" hx-on::after-request={
-  search.HideResults() }></div>
+	<div
+		id="tabs"
+		hx-get="/services/eucustom/aeo"
+		hx-trigger="load"
+		hx-target="#tabs"
+		hx-swap="innerHTML"
+		hx-on::after-request={ search.HideResults() }
+	></div>
 }

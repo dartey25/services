@@ -20,6 +20,7 @@ type ElasticClient struct {
 }
 
 func NewElasticClient(cfg *config.ElasticConfig) (*ElasticClient, error) {
+	fmt.Println(cfg.CertPath)
 	certBytes, err := os.ReadFile(cfg.CertPath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading http certificate: %s", err)
@@ -41,7 +42,11 @@ func NewElasticClient(cfg *config.ElasticConfig) (*ElasticClient, error) {
 	return &ElasticClient{client}, nil
 }
 
-type bulkResponse struct {
+type ElasticResponse struct {
+	*esapi.Response
+}
+
+type BulkResponse struct {
 	Errors bool `json:"errors"`
 	Items  []struct {
 		Index struct {
@@ -74,7 +79,7 @@ func (c *ElasticClient) BulkUpload(params *BulkUploadParams) error {
 		buf bytes.Buffer
 		res *esapi.Response
 		raw map[string]interface{}
-		blk *bulkResponse
+		blk *BulkResponse
 
 		numItems   int
 		numErrors  int

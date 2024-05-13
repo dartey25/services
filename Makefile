@@ -1,9 +1,11 @@
 ifeq ($(OS),Windows_NT)
 	GOOS=windows
 	BINARY_NAME=services.exe
+	AIR_COMMAND=air -c .air.win.toml
 else
 	GOOS=linux
 	BINARY_NAME=services
+	AIR_COMMAND=air
 endif
 
 run: 
@@ -11,8 +13,10 @@ run:
 
 templ:
 	@templ generate -v
-	@#templ generate -watch -proxy=http://localhost:42069
 
 build: templ
 	@GOOS="$(GOOS)" GOARCH="amd64" go build -o bin/$(BINARY_NAME) cmd/main.go
+
+air: 
+	@$(AIR_COMMAND)
 

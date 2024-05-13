@@ -12,6 +12,16 @@ import (
 templ AeoTab(props AeoFormProps) {
 	<div hx-swap-oob="innerHTML:#main-header>span">Уповноважені економічні оператори</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
+	<div hx-swap-oob="innerHTML:#results-table>thead">
+		<tr>
+			<td style="width:100px">№</td>
+			<td>Власник</td>
+			<td style="width:100px">Країна</td>
+			<td style="width:100px">Митниця</td>
+			<td style="width:100px">Тип</td>
+			<td style="width:100px" class="nowrap">Дата видачі</td>
+		</tr>
+	</div>
 	@c.TabList() {
 		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
 		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
@@ -24,15 +34,19 @@ templ AeoTab(props AeoFormProps) {
 type AeoFormProps struct {
 	Holder      string
 	Country     string
-	Types       []model.AeoType
+	Types       []*model.AeoType
 	CountryList []string
+}
+
+script InitCountrySelect() {
+  $(document).ready(function() { $("#countrySelect").select2(); });
 }
 
 templ AeoForm(props AeoFormProps) {
 	<form
 		id="search-form"
 		hx-get="/services/eucustom/aeo/data"
-		hx-target="#results-body"
+		hx-target="#results-table>tbody"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
 		hx-on::before-request={ search.ShowResults() }
@@ -58,13 +72,15 @@ templ AeoForm(props AeoFormProps) {
 		}
 		@form.Group() {
 			@form.Label("Тип уповноваження")
-			@c.Column(c.GridProps{ClassName: "col-sm-9"}) {
+			@c.Row(c.GridProps{ClassName: "col-sm-4"}) {
 				for _, t :=range props.Types {
 					@form.Checkbox(form.CheckboxProps{
 						Name:      "type",
 						Value:     t.Code,
 						IsChecked: t.Checked,
-						Label:     fmt.Sprintf("%s - %s", strings.ToUpper(t.Code), t.Description)})
+						Label:     strings.ToUpper(t.Code),
+						Title:     t.Description,
+						ClassName: "col-sm-1 ml-2 mt-0"})
 				}
 			}
 		}
@@ -74,6 +90,7 @@ templ AeoForm(props AeoFormProps) {
 			c.Button(c.ButtonProps{Text: "Очистити", Variant: "light", OnClick: resetForm("#search-form")}),
 		}})
 	</form>
+	<div class="d-none" hx-on::load={ InitCountrySelect() }></div>
 }
 
 script resetForm(selector string) {
@@ -82,34 +99,36 @@ htmx.find(selector).reset()
 htmx.addClass(htmx.find("#results"), "d-none")
 }
 
-templ resultItem(index int, item model.AeoData, query string) {
-	@search.ResultMedia(search.ResultMediaProps{Index: index, Rows: []templ.Component{
-		search.ResultRow(search.ResultRowProps{Label: "Власник", Component: search.HighlightedText(item.Holder, query)}),
-		search.ResultRow(search.ResultRowProps{Label: "Країна видачі", Text: item.IssCountry}),
-		search.ResultRow(search.ResultRowProps{Label: "Митниця",
-			Component: c.Link(c.LinkProps{
-				Href: fmt.Sprintf("https://ec.europa.eu/taxation_customs/dds2/rd/rd_details.jsp?Lang=EN&DesLang=EN&RefNum=%s",
-					item.CusCode),
-				Text:   item.CusCode,
-				Target: "_blank"})}),
-		search.ResultRow(search.ResultRowProps{Label: "Тип уповноваження", Text: item.AuthType}),
-		search.ResultRow(search.ResultRowProps{Label: "Дата видачі", Text: item.EffDate}),
-	},
-	})
+templ resultTableItem(index int, item model.AeoData, query string) {
+	@search.ResultTableRow(index) {
+		@search.ResultTableCol(search.ResultTableColProps{Component: search.HighlightedText(item.Holder, query)})
+		@search.ResultTableCol(search.ResultTableColProps{Text: item.IssCountry})
+		@search.ResultTableCol(search.ResultTableColProps{Component: c.Link(c.LinkProps{
+			Href: fmt.Sprintf("https://ec.europa.eu/taxation_customs/dds2/rd/rd_details.jsp?Lang=EN&DesLang=EN&RefNum=%s",
+				item.CusCode),
+			Text:   item.CusCode,
+			Target: "_blank"})})
+		@search.ResultTableCol(search.ResultTableColProps{Text: item.AuthType[:strings.Index(item.AuthType, "-")-1]})
+		@search.ResultTableCol(search.ResultTableColProps{Text: item.EffDate})
+	}
+}
+
+templ tableHead() {
+	<thead></thead>
 }
 
 templ AeoResults(data *model.AeoPaginatedData) {
 	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
-	@search.ResultMediaList() {
+	<tbody>
 		for index, item := range data.Data {
-			@resultItem((data.Page-1)*data.Limit+index+1, item, data.Query)
+			@resultTableItem((data.Page-1)*data.Limit+index+1, item, data.Query)
 		}
-	}
+	</tbody>
 	@search.ResultFooter() {
 		if data.TotalPages > data.Page {
 			@search.ShowMoreBtn(templ.Attributes{
 				"hx-get":       fmt.Sprintf("/services/eucustom/aeo/data?page=%d", data.Page+1),
-				"hx-target":    "#results-body",
+				"hx-target":    "#results-table>tbody",
 				"hx-target-*":  "#results-body",
 				"hx-include":   "#search-form",
 				"hx-swap":      "beforeend",

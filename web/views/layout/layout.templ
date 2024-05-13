@@ -1,99 +1,120 @@
 package layout
 
 import (
-"github.com/mdoffice/md-services/web/views/component"
+	"github.com/mdoffice/md-services/web/views/component"
 )
 
 templ Layout() {
-<html>
-
-<head>
-  <script src="https://unpkg.com/htmx.org@1.9.12"
-    integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
-    crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
-    integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
-  <script src="/services/static/js/index.min.js"></script>
-  <link href="/services/static/css/index.min.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body>
-  @navbar()
-  @pageLayout() {
-  { children... }
-  }
-</body>
-
-</html>
+	<html>
+		<head>
+			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
+			<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+			<script src="/services/static/js/index.min.js"></script>
+			<link href="/services/static/css/index.min.css" rel="stylesheet" type="text/css"/>
+		</head>
+		<body>
+			@navbar()
+			@pageLayout() {
+				{ children... }
+			}
+		</body>
+	</html>
 }
 
 templ navbar() {
-<div class="navbar navbar-dark navbar-expand-lg" data-service="eucustom">
-  <div class="navbar-brand d-none d-sm-inline-block">
-    <a href="/services/eucustoms" class="d-inline-block" aria-label="Go home">
-      <img src="https://mdoffice.com.ua/images/bar_logo.png" alt="" />
-    </a>
-  </div>
-  <div class="navbar-text wmin-200 py-1">
-    <a href="#" class="d-inline-block">EuCustom</a>
-    <div class="text-grey-300 font-size-xs">v. 0.1.0 вiд 08.05.2024</div>
-  </div>
-  <div class="d-lg-none"><button type="button" class="navbar-toggler" data-toggle="collapse" data-bs-toggle="collapse"
-      data-target="#navbar-mobile" data-bs-target="#navbar-mobile" aria-label="toggle"><i
-        class="icon-paragraph-justify3"></i></button></div>
-  <div id="navbar-mobile" class="collapse navbar-collapse">
-    <ul class="navbar-nav">
-      <li class="nav-item"><a href="/ua/eur1.home.html" class="navbar-nav-link  pr-lg-2" title="Попередній сервіс"
-          target="_self"><i class="icon-undo2"></i><span class="d-lg-none ml-2">Попередній сервіс</span></a></li>
-      <li class="nav-item"><a href="/" class="navbar-nav-link  px-lg-2" title="mdoffice.com.ua" target="_self"><i
-            class="icon-home2"></i><span class="d-lg-none ml-2">mdoffice.com.ua</span></a></li>
-      <li class="nav-item"><a href="/ua/maps.home.html" class="navbar-nav-link  pl-lg-2" title="Наступний сервіс"
-          target="_self"><i class="icon-redo2"></i><span class="d-lg-none ml-2">Наступний сервіс</span></a></li>
-    </ul>
-    <ul class="navbar-nav ml-md-auto"></ul>
-  </div>
-</div>
+	<div class="navbar navbar-dark navbar-expand-lg" data-service="eucustom">
+		<div class="navbar-brand d-none d-sm-inline-block">
+			<a href="/services/eucustoms" class="d-inline-block" aria-label="Go home">
+				<img src="https://mdoffice.com.ua/images/bar_logo.png" alt=""/>
+			</a>
+		</div>
+		<div class="navbar-text wmin-200 py-1">
+			<a href="#" class="d-inline-block">EuCustom</a>
+			<div class="text-grey-300 font-size-xs">v. 0.1.0 вiд 08.05.2024</div>
+		</div>
+		<div class="d-lg-none">
+			<button
+				type="button"
+				class="navbar-toggler"
+				data-toggle="collapse"
+				data-bs-toggle="collapse"
+				data-target="#navbar-mobile"
+				data-bs-target="#navbar-mobile"
+				aria-label="toggle"
+			>
+				<i
+					class="icon-paragraph-justify3"
+				></i>
+			</button>
+		</div>
+		<div id="navbar-mobile" class="collapse navbar-collapse">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a
+						href="/ua/eur1.home.html"
+						class="navbar-nav-link  pr-lg-2"
+						title="Попередній сервіс"
+						target="_self"
+					><i class="icon-undo2"></i><span class="d-lg-none ml-2">Попередній сервіс</span></a>
+				</li>
+				<li class="nav-item">
+					<a href="/" class="navbar-nav-link  px-lg-2" title="mdoffice.com.ua" target="_self">
+						<i
+							class="icon-home2"
+						></i><span class="d-lg-none ml-2">mdoffice.com.ua</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						href="/ua/maps.home.html"
+						class="navbar-nav-link  pl-lg-2"
+						title="Наступний сервіс"
+						target="_self"
+					><i class="icon-redo2"></i><span class="d-lg-none ml-2">Наступний сервіс</span></a>
+				</li>
+			</ul>
+			<ul class="navbar-nav ml-md-auto"></ul>
+		</div>
+	</div>
 }
 
 templ pageLayout() {
-<div class="page-content">
-  <div class="content-wrapper">
-    <div class="content-inner">
-      <div class="content content-boxed">
-        { children... }
-      </div>
-    </div>
-  </div>
-</div>
+	<div class="page-content">
+		<div class="content-wrapper">
+			<div class="content-inner">
+				<div class="content content-boxed">
+					{ children... }
+				</div>
+			</div>
+		</div>
+	</div>
 }
 
 type MainCardProps struct {
-Header string
-Description string
-Tabs templ.Component
+	Header      string
+	Description string
+	Tabs        templ.Component
 }
 
 templ MainCard(props MainCardProps) {
-@component.Card(component.CardProps{}) {
-if props.Tabs != nil {
-@props.Tabs
-}
-<div class="page-header page-header-xs">
-  <div class="page-header-content header-elements-inline">
-    <div class="page-title pt-3 pb-0">
-      <h4 id="main-header" class="">
-        <span class="font-weight-semibold">{ props.Header }</span>
-      </h4>
-    </div>
-  </div>
-</div>
-<div id="main-description" class="px-3 text-muted">{ props.Description }</div>
-@component.CardBody("") {
-{ children... }
-}
-}
+	@component.Card(component.CardProps{}) {
+		if props.Tabs != nil {
+			@props.Tabs
+		}
+		<div class="page-header page-header-xs">
+			<div class="page-header-content header-elements-inline">
+				<div class="page-title pt-3 pb-0">
+					<h4 id="main-header" class="">
+						<span class="font-weight-semibold">{ props.Header }</span>
+					</h4>
+				</div>
+			</div>
+		</div>
+		<div id="main-description" class="px-3 text-muted">{ props.Description }</div>
+		@component.CardBody("") {
+			{ children... }
+		}
+	}
 }

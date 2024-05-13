@@ -1,11 +1,17 @@
 package service
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/mdoffice/md-services/internal/db"
 	"github.com/mdoffice/md-services/internal/sanctions/model"
 	"github.com/xuri/excelize/v2"
 )
@@ -159,6 +165,170 @@ func (s *SanctionsService) ReCreateIndex(indexName string) error {
 	return nil
 }
 
-func (s *SanctionsService) UploadInBatches(items []*model.SanctionsRow, indexName string) error {
+func (s *SanctionsService) UploadInBatches(items []*model.SanctionsRow, indexName string, batchSize int) error {
+	var (
+		buf bytes.Buffer
+		res *esapi.Response
+		raw map[string]interface{}
+		blk *db.BulkResponse
+
+		numItems   int
+		numErrors  int
+		numIndexed int
+		numBatches int
+		currBatch  int
+		count      int
+	)
+
+	count = len(items)
+
+	if count%batchSize == 0 {
+		numBatches = (count / batchSize)
+	} else {
+		numBatches = (count / batchSize) + 1
+	}
+
+	start := time.Now().UTC()
+	for i, item := range items {
+		numItems++
+
+		currBatch = i / batchSize
+
+		if i == count-1 {
+			currBatch++
+		}
+
+		metaBytes := []byte(fmt.Sprintf(`{ "index" : { "_id" : "%d" } }%s`, item.SID, "\n"))
+		data, err := json.Marshal(item)
+		if err != nil {
+			log.Fatalf("Cannot encode item with index %d: %s", i, err)
+		}
+
+		// Append newline to the data payload
+		//
+		data = append(data, "\n"...) // <-- Comment out to trigger failure for batch
+		// fmt.Printf("%s", data) // <-- Uncomment to see the payload
+
+		// // Uncomment next block to trigger indexing errors -->
+		// if a.ID == 11 || a.ID == 101 {
+		// 	data = []byte(`{"published" : "INCORRECT"}` + "\n")
+		// }
+		// // <--------------------------------------------------
+
+		// Append payloads to the buffer (ignoring write errors)
+		//
+		buf.Grow(len(metaBytes) + len(data))
+		buf.Write(metaBytes)
+		buf.Write(data)
+
+		// When a threshold is reached, execute the Bulk() request with body from buffer
+		//
+		if i > 0 && i%batchSize == 0 || i == count-1 {
+			fmt.Printf("[%d/%d] ", currBatch, numBatches)
+
+			res, err = s.es.Bulk(bytes.NewReader(buf.Bytes()), s.es.Bulk.WithIndex(indexName))
+			if err != nil {
+				log.Fatalf("Failure indexing batch %d: %s", currBatch, err)
+				return fmt.Errorf("Failure indexing batch %d: %s", currBatch, err)
+			}
+			// If the whole request failed, print error and mark all documents as failed
+			//
+			if res.IsError() {
+				numErrors += numItems
+				if err := json.NewDecoder(res.Body).Decode(&raw); err != nil {
+					log.Fatalf("Failure to to parse response body: %s", err)
+					return fmt.Errorf("Failure to to parse response body: %s", err)
+				} else {
+					log.Printf("  Error: [%d] %s: %s",
+						res.StatusCode,
+						raw["error"].(map[string]interface{})["type"],
+						raw["error"].(map[string]interface{})["reason"],
+					)
+					return fmt.Errorf("  Error: [%d] %s: %s",
+						res.StatusCode,
+						raw["error"].(map[string]interface{})["type"],
+						raw["error"].(map[string]interface{})["reason"],
+					)
+				}
+				// A successful response might still contain errors for particular documents...
+				//
+			} else {
+				if err := json.NewDecoder(res.Body).Decode(&blk); err != nil {
+					log.Fatalf("Failure to to parse response body: %s", err)
+				} else {
+					for _, d := range blk.Items {
+						// ... so for any HTTP status above 201 ...
+						//
+						if d.Index.Status > 201 {
+							// ... increment the error counter ...
+							//
+							numErrors++
+
+							// ... and print the response status and error information ...
+							log.Printf("  Error: [%d]: %s: %s: %s: %s",
+								d.Index.Status,
+								d.Index.Error.Type,
+								d.Index.Error.Reason,
+								d.Index.Error.Cause.Type,
+								d.Index.Error.Cause.Reason,
+							)
+							return fmt.Errorf("  Error: [%d]: %s: %s: %s: %s",
+								d.Index.Status,
+								d.Index.Error.Type,
+								d.Index.Error.Reason,
+								d.Index.Error.Cause.Type,
+								d.Index.Error.Cause.Reason,
+							)
+						} else {
+							// ... otherwise increase the success counter.
+							//
+							numIndexed++
+						}
+					}
+				}
+			}
+
+			// Close the response body, to prevent reaching the limit for goroutines or file handles
+			//
+			res.Body.Close()
+
+			// Reset the buffer and items counter
+			//
+			buf.Reset()
+			numItems = 0
+		}
+	}
+
+	// Report the results: number of indexed docs, number of errors, duration, indexing rate
+	//
+	fmt.Print("\n")
+	log.Println(strings.Repeat("▔", 65))
+
+	dur := time.Since(start)
+
+	if numErrors > 0 {
+		log.Fatalf(
+			"Indexed [%s] documents with [%s] errors in %s (%s docs/sec)",
+			humanize.Comma(int64(numIndexed)),
+			humanize.Comma(int64(numErrors)),
+			dur.Truncate(time.Millisecond),
+			humanize.Comma(int64(1000.0/float64(dur/time.Millisecond)*float64(numIndexed))),
+		)
+		return fmt.Errorf(
+			"Indexed [%s] documents with [%s] errors in %s (%s docs/sec)",
+			humanize.Comma(int64(numIndexed)),
+			humanize.Comma(int64(numErrors)),
+			dur.Truncate(time.Millisecond),
+			humanize.Comma(int64(1000.0/float64(dur/time.Millisecond)*float64(numIndexed))),
+		)
+	} else {
+		log.Printf(
+			"Sucessfuly indexed [%s] documents in %s (%s docs/sec)",
+			humanize.Comma(int64(numIndexed)),
+			dur.Truncate(time.Millisecond),
+			humanize.Comma(int64(1000.0/float64(dur/time.Millisecond)*float64(numIndexed))),
+		)
+	}
+
 	return nil
 }

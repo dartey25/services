@@ -5,12 +5,19 @@ type CheckboxProps struct {
 	Name      string
 	Value     string
 	Label     string
+	Title     string
+	ClassName string
 	IsChecked bool
 }
 
 templ Checkbox(props CheckboxProps) {
-	<div class="form-check form-check-inline">
-		<label class="form-check-label">
+	<div class={ "form-check form-check-inline", props.ClassName }>
+		<label
+			class="form-check-label"
+			if props.Title != "" {
+				title={ props.Title }
+			}
+		>
 			<input
 				id={ props.ID }
 				type="checkbox"

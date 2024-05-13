@@ -16,6 +16,8 @@ import (
 	database "github.com/mdoffice/md-services/internal/db"
 	"github.com/mdoffice/md-services/internal/eucustoms/handler"
 	"github.com/mdoffice/md-services/internal/eucustoms/service"
+	sanctionsHandler "github.com/mdoffice/md-services/internal/sanctions/handler"
+	sanctionsService "github.com/mdoffice/md-services/internal/sanctions/service"
 )
 
 func main() {
@@ -30,11 +32,11 @@ func main() {
 		log.Fatalf("Error connecting to Oracle: %v", err)
 	}
 	defer db.Close()
-	// fmt.Println(1)
-	// es, err := database.NewElasticClient(&cfg.Elastic)
-	// if err != nil {
-	// 	log.Fatalf("Error connecting to Elastic: %v", err)
-	// }
+
+	es, err := database.NewElasticClient(&cfg.Elastic)
+	if err != nil {
+		log.Fatalf("Error connecting to Elastic: %v", err)
+	}
 
 	app := echo.New()
 	app.Use(middleware.Recover())
@@ -47,11 +49,10 @@ func main() {
 	}))
 	app.Static("/static", "assets")
 
-	euGroup := app.Group("/eucustom", middleware.Rewrite(map[string]string{
-		fmt.Sprintf("/%s/*", cfg.Server.Prefix): "/$1",
-	}))
+	euGroup := app.Group("/eucustom")
 	s := service.NewEuCustomService(db)
 	e := handler.NewEuCustomHandler(s)
+	euGroup.GET("", e.HandleIndex)
 	euGroup.GET("/", e.HandleIndex)
 	euGroup.GET("/aeo", e.HandleAeoTab)
 	euGroup.GET("/aeo/form", e.HandleAeoForm)
@@ -61,11 +62,11 @@ func main() {
 	euGroup.GET("/eori/data", e.HandleGetEoriData)
 	app.GET("/joker/eori/validate", e.HandleJokerEoriData)
 
-	// sGroup := app.Group("/sanctions")
-	// ss := sanctService.NewSanctionsService(es)
-	// ess := sanctHandler.NewSanctionsHandler(ss)
-	// sGroup.GET("/parse", ess.HandleParseLegal)
-	// sGroup.GET("/query", ess.HandleQueryLegal)
+	sGroup := app.Group("/sanctions")
+	ss := sanctionsService.NewSanctionsService(es)
+	ess := sanctionsHandler.NewSanctionsHandler(ss)
+	sGroup.GET("/parse", ess.HandleParseLegal)
+	sGroup.GET("/query", ess.HandleQueryLegal)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
