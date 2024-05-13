@@ -32,6 +32,9 @@ func (h *EuCustomHandler) HandleGetEoriData(c echo.Context) error {
 
 func (h *EuCustomHandler) HandleJokerEoriData(c echo.Context) error {
 	eori := c.QueryParam("code")
+	if eori == "" {
+		return c.XML(http.StatusBadRequest, core.NewApiError("eori code is required, got none"))
+	}
 	data, err := h.service.ValidateEori(eori)
 	if err != nil {
 		return c.XML(http.StatusBadRequest, core.NewApiError(err.Error()))

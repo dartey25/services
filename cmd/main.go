@@ -16,8 +16,6 @@ import (
 	database "github.com/mdoffice/md-services/internal/db"
 	"github.com/mdoffice/md-services/internal/eucustoms/handler"
 	"github.com/mdoffice/md-services/internal/eucustoms/service"
-	sanctionsHandler "github.com/mdoffice/md-services/internal/sanctions/handler"
-	sanctionsService "github.com/mdoffice/md-services/internal/sanctions/service"
 )
 
 func main() {
@@ -33,11 +31,11 @@ func main() {
 	}
 	defer db.Close()
 
-	es, err := database.NewElasticClient(&cfg.Elastic)
-	if err != nil {
-		log.Fatalf("Error connecting to Elastic: %v", err)
-	}
-
+	// es, err := database.NewElasticClient(&cfg.Elastic)
+	// if err != nil {
+	// // 	log.Fatalf("Error connecting to Elastic: %v", err)
+	// // }
+	//
 	app := echo.New()
 	app.Use(middleware.Recover())
 	app.Use(middleware.Logger())
@@ -61,12 +59,13 @@ func main() {
 	euGroup.GET("/aeo/data", e.HandleGetAeoData)
 	euGroup.GET("/eori/data", e.HandleGetEoriData)
 	app.GET("/joker/eori/validate", e.HandleJokerEoriData)
+	app.POST("/joker/eori/validate", e.HandleJokerEoriData)
 
-	sGroup := app.Group("/sanctions")
-	ss := sanctionsService.NewSanctionsService(es)
-	ess := sanctionsHandler.NewSanctionsHandler(ss)
-	sGroup.GET("/parse", ess.HandleParseLegal)
-	sGroup.GET("/query", ess.HandleQueryLegal)
+	// sGroup := app.Group("/sanctions")
+	// ss := sanctionsService.NewSanctionsService(es)
+	// ess := sanctionsHandler.NewSanctionsHandler(ss)
+	// sGroup.GET("/parse", ess.HandleParseLegal)
+	// sGroup.GET("/query", ess.HandleQueryLegal)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
