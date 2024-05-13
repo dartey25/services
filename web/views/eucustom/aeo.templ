@@ -13,8 +13,8 @@ templ AeoTab(props AeoFormProps) {
 	<div hx-swap-oob="innerHTML:#main-header>span">Уповноважені економічні оператори</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
 	@c.TabList() {
-		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/aeo", IsActive: true})
-		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/eori"})
+		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
+		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
 	}
 	<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
 		@AeoForm(props)
@@ -31,7 +31,7 @@ type AeoFormProps struct {
 templ AeoForm(props AeoFormProps) {
 	<form
 		id="search-form"
-		hx-get="/aeo/data"
+		hx-get="/services/eucustom/aeo/data"
 		hx-target="#results-body"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
@@ -108,7 +108,7 @@ templ AeoResults(data *model.AeoPaginatedData) {
 	@search.ResultFooter() {
 		if data.TotalPages > data.Page {
 			@search.ShowMoreBtn(templ.Attributes{
-				"hx-get":       fmt.Sprintf("/aeo/data?page=%d", data.Page+1),
+				"hx-get":       fmt.Sprintf("/services/eucustom/aeo/data?page=%d", data.Page+1),
 				"hx-target":    "#results-body",
 				"hx-target-*":  "#results-body",
 				"hx-include":   "#search-form",

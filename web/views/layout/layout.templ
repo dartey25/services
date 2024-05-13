@@ -17,8 +17,8 @@ templ Layout() {
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
-  <script src="/static/js/index.min.js"></script>
-  <link href="/static/css/index.min.css" rel="stylesheet" type="text/css" />
+  <script src="/services/static/js/index.min.js"></script>
+  <link href="/services/static/css/index.min.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -34,12 +34,12 @@ templ Layout() {
 templ navbar() {
 <div class="navbar navbar-dark navbar-expand-lg" data-service="eucustom">
   <div class="navbar-brand d-none d-sm-inline-block">
-    <a href="/" class="d-inline-block" aria-label="Go home">
+    <a href="/services/eucustoms" class="d-inline-block" aria-label="Go home">
       <img src="https://mdoffice.com.ua/images/bar_logo.png" alt="" />
     </a>
   </div>
   <div class="navbar-text wmin-200 py-1">
-    <a href="/ua/cdc.home.html" class="d-inline-block">EuCustom</a>
+    <a href="#" class="d-inline-block">EuCustom</a>
     <div class="text-grey-300 font-size-xs">v. 0.1.0 вiд 08.05.2024</div>
   </div>
   <div class="d-lg-none"><button type="button" class="navbar-toggler" data-toggle="collapse" data-bs-toggle="collapse"

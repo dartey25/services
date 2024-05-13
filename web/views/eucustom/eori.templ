@@ -11,8 +11,8 @@ templ EoriTab() {
 	<div hx-swap-oob="innerHTML:#main-header>span">Валідація коду EORI</div>
 	<div hx-swap-oob="innerHTML:#main-description">Перевірити правильність коду</div>
 	@c.TabList() {
-		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/aeo"})
-		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/eori", IsActive: true})
+		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo"})
+		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori", IsActive: true})
 	}
 	<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
 		@EoriForm()
@@ -21,7 +21,7 @@ templ EoriTab() {
 
 templ EoriForm() {
 	<form
-		hx-get="/eori/data"
+		hx-get="/services/eori/data"
 		hx-target="#results-body"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"

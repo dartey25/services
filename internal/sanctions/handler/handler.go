@@ -27,7 +27,7 @@ func (h *SanctionsHandler) HandleParseLegal(c echo.Context) error {
 		return err
 	}
 
-	h.svc.UploadInBatches(&sanctions)
+	err = h.svc.UploadInBatches(sanctions, "index_name")
 	if err != nil {
 		return err
 	}
