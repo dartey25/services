@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -33,11 +34,14 @@ func (h *EuCustomHandler) HandleGetEoriData(c echo.Context) error {
 func (h *EuCustomHandler) HandleJokerEoriData(c echo.Context) error {
 	eori := c.QueryParam("code")
 	if eori == "" {
-		return c.XML(http.StatusBadRequest, core.NewApiError("eori code is required, got none"))
+		return c.XML(http.StatusOK, core.NewApiError("eori code is required, got none"))
 	}
+
+	fmt.Printf("REQUEST: %+v\n", c.Request())
+
 	data, err := h.service.ValidateEori(eori)
 	if err != nil {
-		return c.XML(http.StatusBadRequest, core.NewApiError(err.Error()))
+		return c.XML(http.StatusOK, core.NewApiError(err.Error()))
 	}
 
 	return c.XML(http.StatusOK, core.NewApiResponse(data))

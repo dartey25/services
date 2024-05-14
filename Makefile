@@ -17,6 +17,9 @@ templ:
 build: templ
 	@GOOS="$(GOOS)" GOARCH="amd64" go build -o bin/$(BINARY_NAME) cmd/main.go
 
+build-win: templ
+	@GOOS="windows" GOARCH="amd64" go build -o bin/services.exe cmd/main.go
+
 air: 
 	@$(AIR_COMMAND)
 
