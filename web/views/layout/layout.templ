@@ -4,7 +4,7 @@ import (
 	"github.com/mdoffice/md-services/web/views/component"
 )
 
-templ Layout() {
+templ Layout(title string) {
 	<html>
 		<head>
 			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
@@ -13,6 +13,7 @@ templ Layout() {
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 			<script src="/services/static/js/index.min.js"></script>
 			<link href="/services/static/css/index.min.css" rel="stylesheet" type="text/css"/>
+      <title>{title} - MD Services</title>
 		</head>
 		<body>
 			@navbar()

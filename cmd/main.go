@@ -46,9 +46,6 @@ func main() {
 		"/services/*": "/$1",
 	}))
 	app.Static("/static", "assets")
-	app.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		c.Logger().Infof("REQUEST BODY %+v", reqBody)
-	}))
 
 	euGroup := app.Group("/eucustom")
 	s := service.NewEuCustomService(db)

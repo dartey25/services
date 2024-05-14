@@ -6,7 +6,7 @@ import (
 )
 
 templ Index() {
-	@layout.Layout() {
+	@layout.Layout("EuCustom") {
 		@layout.MainCard(layout.MainCardProps{Tabs: tabsLayout()}) {
 			<div id="tab-content"></div>
 		}
