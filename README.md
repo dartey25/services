@@ -8,8 +8,6 @@ A Go-based microservices project with a modular structure. This project includes
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Folder Structure](#folder-structure)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
@@ -42,3 +40,29 @@ database:
   user: username
   password: password
   dbname: servicename
+```
+
+## Usage
+To run the application:
+```bash
+make run
+```
+For live reloading during development, use Air:
+### Running with Air
+Install Air:
+```bash
+curl -fLo air https://raw.githubusercontent.com/cosmtrek/air/master/bin/linux/air
+chmod +x air
+sudo mv air /usr/local/bin
+```
+Run the application:
+```bash
+make air
+```
+## Folder Structure
+- `assets`: Static files
+- `cmd`: Main applications
+- `config`: Configuration files
+- `internal`: Private application and library code
+- `pkg`: Public library code
+- `web`: Front-end code
