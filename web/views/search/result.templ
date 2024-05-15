@@ -39,8 +39,10 @@ templ ResultCard(props ResultCardProps) {
 			class="card-body p-0"
 		>
 			if props.IsTable {
-				<div id="table-header" class="d-flex justify-content-between"></div>
-				<div id="table-body"></div>
+				<table class="table">
+					<thead id="thead"></thead>
+					<tbody></tbody>
+				</table>
 			}
 		</div>
 		@component.LoadingIndicator()
@@ -78,9 +80,7 @@ templ ResultTableRow(index int) {
 	<tr
 		id={ fmt.Sprintf("item-%v", index) }
 	>
-		<td class="text-danger">
-			{ fmt.Sprintf("%v.", index ) }
-		</td>
+		@ResultTableCol(ResultTableColProps{ClassName: "text-danger", Text: fmt.Sprintf("%v.", index)})
 		{ children... }
 	</tr>
 }

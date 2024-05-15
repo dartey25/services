@@ -31,8 +31,7 @@ templ tabsLayout() {
 		id="tabs"
 		hx-get="/services/eucustom/aeo"
 		hx-trigger="load"
-		hx-target="#tabs"
-		hx-swap="innerHTML"
+		hx-swap="none"
 		hx-on::after-request={ search.HideResults() }
 	></div>
 }

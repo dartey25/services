@@ -15,12 +15,11 @@ templ AeoTab(props AeoFormProps) {
 		@c.SocialButtons("")
 	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
-	@c.TabList() {
-		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
-		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
-	}
-	<div hx-swap-oob="innerHTML:#results-body #table-header">
-		@AeoHeader()
+	<div hx-swap-oob="innerHTML:#tabs">
+		@c.TabList() {
+			@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
+			@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
+		}
 	</div>
 	<div role="tabpanel" hx-swap-oob="outerHTML:#tab-content">
 		@AeoForm(props)
@@ -28,12 +27,14 @@ templ AeoTab(props AeoFormProps) {
 }
 
 templ AeoHeader() {
-	<div>№</div>
-	<div>Власник</div>
-	<div>Країна</div>
-	<div>Митниця</div>
-	<div>Тип</div>
-	<div>Дата видачі</div>
+	<tr>
+		<th>№</th>
+		<th>Власник</th>
+		<th>Країна</th>
+		<th>Митниця</th>
+		<th>Тип</th>
+		<th>Дата видачі</th>
+	</tr>
 }
 
 type AeoFormProps struct {
@@ -51,7 +52,7 @@ templ AeoForm(props AeoFormProps) {
 	<form
 		id="search-form"
 		hx-get="/services/eucustom/aeo/data"
-		hx-target="#results-body #table-body"
+		hx-swap="none"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
 		hx-on::before-request={ search.ShowResults() }
@@ -119,18 +120,24 @@ templ resultTableItem(index int, item model.AeoData, query string) {
 }
 
 templ AeoResults(data *model.AeoPaginatedData) {
-	for index, item := range data.Data {
-		@resultTableItem((data.Page-1)*data.Limit+index+1, item, data.Query)
+	if data.Page == 1 {
+		<thead hx-swap-oob="innerHTML:#thead">
+			@AeoHeader()
+		</thead>
 	}
+	<tbody hx-swap-oob="beforeend:#results-body tbody">
+		for index, item := range data.Data {
+			@resultTableItem((data.Page-1)*data.Limit+index+1, item, data.Query)
+		}
+	</tbody>
 	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
 	@search.ResultFooter() {
 		if data.TotalPages > data.Page {
 			@search.ShowMoreBtn(templ.Attributes{
 				"hx-get":       fmt.Sprintf("/services/eucustom/aeo/data?page=%d", data.Page+1),
-				"hx-target":    "#results-body #table-body",
 				"hx-target-*":  "#results-body",
 				"hx-include":   "#search-form",
-				"hx-swap":      "beforeend",
+				"hx-swap":      "none",
 				"hx-indicator": "#loading-indicator",
 			})
 		}
