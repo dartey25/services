@@ -76,11 +76,16 @@ templ ResultTotalCounter(total int, attributes templ.Attributes) {
 	<span id="results-total" { attributes... }>{ strconv.Itoa(total) }</span>
 }
 
+templ indexAndCopy(index int, url string) {
+	<span class="text-danger">{ fmt.Sprintf("%v.", index) }</span>
+	@component.CopyShare(url)
+}
+
 templ ResultTableRow(index int) {
 	<tr
 		id={ fmt.Sprintf("item-%v", index) }
 	>
-		@ResultTableCol(ResultTableColProps{ClassName: "text-danger", Text: fmt.Sprintf("%v.", index)})
+		@ResultTableCol(ResultTableColProps{Component: indexAndCopy(index, "")})
 		{ children... }
 	</tr>
 }
