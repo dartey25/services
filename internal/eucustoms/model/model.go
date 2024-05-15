@@ -25,14 +25,15 @@ type AeoPaginatedData struct {
 }
 
 type AeoData struct {
-	Id         int          `json:"id" db:"ID"`
-	Holder     string       `json:"holder,omitempty" db:"NAME"`
-	IssCountry string       `json:"issCountry,omitempty" db:"CNT"`
-	CusCode    string       `json:"cusCode,omitempty" db:"CUSTOM"`
-	AuthType   string       `json:"authType,omitempty" db:"CERT"`
-	EffDate    string       `json:"effDate,omitempty" db:"EFFDATE"`
-	CreatedAt  time.Time    `json:"createdAt" db:"DATE_CREATE"`
-	DeletedAt  sql.NullTime `json:"deletedAt,omitempty" db:"DATE_DELETE"`
+	Id              int          `json:"id" db:"ID"`
+	Holder          string       `json:"holder,omitempty" db:"NAME"`
+	HolderHighlight string       `xml:"-" db:"-"`
+	IssCountry      string       `json:"issCountry,omitempty" db:"CNT"`
+	CusCode         string       `json:"cusCode,omitempty" db:"CUSTOM"`
+	AuthType        string       `json:"authType,omitempty" db:"CERT"`
+	EffDate         string       `json:"effDate,omitempty" db:"EFFDATE"`
+	CreatedAt       time.Time    `json:"createdAt" db:"DATE_CREATE"`
+	DeletedAt       sql.NullTime `json:"deletedAt,omitempty" db:"DATE_DELETE"`
 }
 
 type AeoType struct {

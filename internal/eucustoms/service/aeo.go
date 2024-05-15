@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/mdoffice/md-services/internal/eucustoms/model"
@@ -70,5 +71,24 @@ func (s *EuCustomService) GetAeoData(q model.AeoQueryParams) (*model.AeoPaginate
 		return nil, err
 	}
 
+	if q.Holder != "" {
+		for i := 0; i < len(data.Data); i++ {
+			item := &data.Data[i]
+			item.HolderHighlight = highlight(item.Holder, q.Holder)
+		}
+	}
+
 	return &data, nil
+}
+
+func highlight(s, q string) string {
+	r, err := regexp.Compile(fmt.Sprintf(`(?i)\b\w*%s\w*\b`, q))
+	if err != nil {
+		return s
+	}
+	matches := r.FindAllString(s, -1)
+	for _, match := range matches {
+		s = r.ReplaceAllString(s, fmt.Sprintf(`<span class="text-uppercase bg-primary-300">%s</span>`, strings.ToUpper(match)))
+	}
+	return s
 }

@@ -101,11 +101,12 @@ script resetForm(selector string) {
 event.preventDefault()
 htmx.find(selector).reset()
 htmx.addClass(htmx.find("#results"), "d-none")
+htmx.find("#results-body tbody").innerHTML = ""
 }
 
 templ resultTableItem(index int, item model.AeoData, query string) {
 	@search.ResultTableRow(index) {
-		@search.ResultTableCol(search.ResultTableColProps{Component: search.HighlightedText(item.Holder, query)})
+		@search.ResultTableCol(search.ResultTableColProps{Component: search.HighlightedText(item.HolderHighlight, item.Holder)})
 		@search.ResultTableCol(search.ResultTableColProps{Text: item.IssCountry})
 		@search.ResultTableCol(search.ResultTableColProps{Component: c.Link(c.LinkProps{
 			Href: fmt.Sprintf("https://ec.europa.eu/taxation_customs/dds2/rd/rd_details.jsp?Lang=EN&DesLang=EN&RefNum=%s",

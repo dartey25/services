@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/mdoffice/md-services/web/views/component"
 	"strconv"
-	"strings"
 )
 
 script ShowResults() {
+htmx.find("#results-body tbody").innerHTML = ""
 htmx.removeClass(htmx.find("#results"), "d-none")
 }
 
@@ -163,11 +163,10 @@ templ ResultRow(props ResultRowProps) {
 	</div>
 }
 
-templ HighlightedText(text, stem string) {
-	if stem != "" {
-		@templ.Raw(strings.Replace(text, stem, fmt.Sprintf(`<span class="text-uppercase bg-primary-300 search-match">%s</span>`,
-			strings.ToUpper(stem)), -1))
+templ HighlightedText(highlight, original string) {
+	if highlight != "" {
+		@templ.Raw(highlight)
 	} else {
-		{ text }
+		{ original }
 	}
 }
