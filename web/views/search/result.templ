@@ -39,10 +39,8 @@ templ ResultCard(props ResultCardProps) {
 			class="card-body p-0"
 		>
 			if props.IsTable {
-				<table id="results-table" class={ "table", props.TableClass }>
-					<thead></thead>
-					<tbody></tbody>
-				</table>
+				<div id="table-header" class="d-flex justify-content-between"></div>
+				<div id="table-body"></div>
 			}
 		</div>
 		@component.LoadingIndicator()

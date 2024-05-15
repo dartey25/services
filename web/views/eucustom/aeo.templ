@@ -15,23 +15,25 @@ templ AeoTab(props AeoFormProps) {
 		@c.SocialButtons("")
 	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
-	<div hx-swap-oob="innerHTML:#results-table>thead">
-		<tr>
-			<td style="width:100px">№</td>
-			<td>Власник</td>
-			<td style="width:100px">Країна</td>
-			<td style="width:100px">Митниця</td>
-			<td style="width:100px">Тип</td>
-			<td style="width:100px" class="nowrap">Дата видачі</td>
-		</tr>
-	</div>
 	@c.TabList() {
 		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
 		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
 	}
-	<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
+	<div hx-swap-oob="innerHTML:#results-body #table-header">
+		@AeoHeader()
+	</div>
+	<div role="tabpanel" hx-swap-oob="outerHTML:#tab-content">
 		@AeoForm(props)
 	</div>
+}
+
+templ AeoHeader() {
+	<div>№</div>
+	<div>Власник</div>
+	<div>Країна</div>
+	<div>Митниця</div>
+	<div>Тип</div>
+	<div>Дата видачі</div>
 }
 
 type AeoFormProps struct {
@@ -49,7 +51,7 @@ templ AeoForm(props AeoFormProps) {
 	<form
 		id="search-form"
 		hx-get="/services/eucustom/aeo/data"
-		hx-target="#results-table>tbody"
+		hx-target="#results-body #table-body"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
 		hx-on::before-request={ search.ShowResults() }
@@ -116,22 +118,16 @@ templ resultTableItem(index int, item model.AeoData, query string) {
 	}
 }
 
-templ tableHead() {
-	<thead></thead>
-}
-
 templ AeoResults(data *model.AeoPaginatedData) {
+	for index, item := range data.Data {
+		@resultTableItem((data.Page-1)*data.Limit+index+1, item, data.Query)
+	}
 	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
-	<tbody>
-		for index, item := range data.Data {
-			@resultTableItem((data.Page-1)*data.Limit+index+1, item, data.Query)
-		}
-	</tbody>
 	@search.ResultFooter() {
 		if data.TotalPages > data.Page {
 			@search.ShowMoreBtn(templ.Attributes{
 				"hx-get":       fmt.Sprintf("/services/eucustom/aeo/data?page=%d", data.Page+1),
-				"hx-target":    "#results-table>tbody",
+				"hx-target":    "#results-body #table-body",
 				"hx-target-*":  "#results-body",
 				"hx-include":   "#search-form",
 				"hx-swap":      "beforeend",

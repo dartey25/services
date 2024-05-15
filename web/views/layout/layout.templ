@@ -12,6 +12,7 @@ type LayoutProps struct {
 templ Layout(props LayoutProps) {
 	<html>
 		<head>
+			<meta name="htmx-config" content='{"useTemplateFragments":"true"}'/>
 			<title>{ props.Title } - MD Services</title>
 			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous" async></script>
 			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js" async></script>
