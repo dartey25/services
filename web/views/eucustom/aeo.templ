@@ -15,12 +15,10 @@ templ AeoTab(props AeoFormProps) {
 		@c.SocialButtons("")
 	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
-	<div hx-swap-oob="innerHTML:#tabs">
-		@c.TabList() {
-			@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
-			@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
-		}
-	</div>
+	@c.TabList() {
+		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
+		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
+	}
 	<div role="tabpanel" hx-swap-oob="outerHTML:#tab-content">
 		@AeoForm(props)
 	</div>
