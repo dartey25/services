@@ -38,6 +38,9 @@ func main() {
 	// // }
 	//
 	app := echo.New()
+	app.HideBanner = true
+	app.HidePort = true
+
 	app.Use(middleware.Recover())
 	app.Use(middleware.Logger())
 	app.Use(middleware.CORS())
