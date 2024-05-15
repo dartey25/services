@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"time"
 
+	rice "github.com/GeertJohan/go.rice"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -45,7 +46,8 @@ func main() {
 	app.Pre(middleware.Rewrite(map[string]string{
 		"/services/*": "/$1",
 	}))
-	app.Static("/static", "assets")
+	assetHandler := http.FileServer(rice.MustFindBox("../assets").HTTPBox())
+	app.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static/", assetHandler)))
 
 	euGroup := app.Group("/eucustom")
 	s := service.NewEuCustomService(db)

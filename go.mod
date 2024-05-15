@@ -3,6 +3,7 @@ module github.com/mdoffice/md-services
 go 1.22.2
 
 require (
+	github.com/GeertJohan/go.rice v1.0.3
 	github.com/a-h/templ v0.2.663
 	github.com/dustin/go-humanize v1.0.1
 	github.com/elastic/go-elasticsearch/v8 v8.13.1
@@ -15,6 +16,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/daaku/go.zipexe v1.0.2 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.5.0 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
