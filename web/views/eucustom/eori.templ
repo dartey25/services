@@ -8,7 +8,10 @@ import (
 )
 
 templ EoriTab() {
-	<div hx-swap-oob="innerHTML:#main-header>span">Валідація коду EORI</div>
+	<div hx-swap-oob="innerHTML:#main-header>span">
+		Перевірка коду EORI
+		@c.SocialButtons("")
+	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Перевірити правильність коду</div>
 	@c.TabList() {
 		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo"})

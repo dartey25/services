@@ -1,0 +1,103 @@
+package layout
+
+import (
+	"time"
+	"fmt"
+)
+
+type Version struct {
+	Major int
+	Minor int
+	Patch int
+	Date  time.Time
+}
+
+type NavbarProps struct {
+	Version Version
+	Title   string
+}
+
+templ navbar(props NavbarProps) {
+	<div class="navbar navbar-dark navbar-expand-lg">
+		<div class="navbar-brand d-none d-sm-inline-block">
+			<a href="/services/eucustoms" class="d-inline-block" aria-label="Go home">
+				<img src="https://mdoffice.com.ua/images/bar_logo.png" alt=""/>
+			</a>
+		</div>
+		<div class="navbar-text wmin-200 py-1">
+			<a href="#" class="d-inline-block">{ props.Title }</a>
+			<div class="text-grey-300 font-size-xs">
+				v. { fmt.Sprintf("%d.%d.%d", props.Version.Major, props.Version.Minor, props.Version.Patch) } вiд { props.Version.Date.Format("02.01.2006") }
+			</div>
+		</div>
+		<div class="d-lg-none">
+			<button
+				type="button"
+				class="navbar-toggler"
+				data-toggle="collapse"
+				data-bs-toggle="collapse"
+				data-target="#navbar-mobile"
+				data-bs-target="#navbar-mobile"
+				aria-label="toggle"
+			>
+				<i
+					class="icon-paragraph-justify3"
+				></i>
+			</button>
+		</div>
+		<div id="navbar-mobile" class="collapse navbar-collapse">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a
+						href="/ua/eur1.home.html"
+						class="navbar-nav-link  pr-lg-2"
+						title="Попередній сервіс"
+						target="_self"
+					><i class="icon-undo2"></i><span class="d-lg-none ml-2">Попередній сервіс</span></a>
+				</li>
+				<li class="nav-item">
+					<a href="/" class="navbar-nav-link  px-lg-2" title="mdoffice.com.ua" target="_self">
+						<i
+							class="icon-home2"
+						></i><span class="d-lg-none ml-2">mdoffice.com.ua</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						href="/ua/maps.home.html"
+						class="navbar-nav-link  pl-lg-2"
+						title="Наступний сервіс"
+						target="_self"
+					><i class="icon-redo2"></i><span class="d-lg-none ml-2">Наступний сервіс</span></a>
+				</li>
+			</ul>
+			<ul class="navbar-nav ml-md-auto">
+				@info()
+				@profile()
+			</ul>
+		</div>
+	</div>
+}
+
+templ info() {
+	<li class="nav-item dropdown">
+		<a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" title="Інформація " aria-expanded="false">
+			<i class="icon-info22"></i>
+			<span class="d-lg-none ml-2">Інформація </span>
+		</a>
+		<div class="dropdown-menu wmin-200 dropdown-menu-right">
+			<a href="/ua/core.page.show?i_service=abc&i_article=manual" class="dropdown-item" title="Настанова користувача">Настанова користувача</a>
+			<div class="dropdown-divider mb-2"></div>
+			<a href="/ua/aMDOForumPO.Request?p_prog=abcweb" class="dropdown-item" title=" Заявка на доопрацювання">Заявка на доопрацювання</a>
+		</div>
+	</li>
+}
+
+templ profile() {
+	<li class="nav-item">
+		<a href="/ua/aMDOUsersReg.profile" class="navbar-nav-link " title="Кабінет">
+			<i class="icon-user"></i>
+			<span class="d-lg-none d-lg-inline-block ml-2">Dartey</span>
+		</a>
+	</li>
+}

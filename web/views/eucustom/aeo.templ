@@ -10,7 +10,10 @@ import (
 )
 
 templ AeoTab(props AeoFormProps) {
-	<div hx-swap-oob="innerHTML:#main-header>span">Уповноважені економічні оператори</div>
+	<div hx-swap-oob="innerHTML:#main-header>span">
+		Уповноважені економічні оператори
+		@c.SocialButtons("")
+	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
 	<div hx-swap-oob="innerHTML:#results-table>thead">
 		<tr>
