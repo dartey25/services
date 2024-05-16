@@ -1,3 +1,5 @@
+import "../css/style.css";
+import { initSelect2 } from "./functions";
 import "@mdoffice/md-ui/css/bootstrap.css";
 import "@mdoffice/md-ui/css/bootstrap_limitless.css";
 import "@mdoffice/md-ui/css/cci.color.css";
@@ -6,4 +8,15 @@ import "@mdoffice/md-ui/css/layout.css";
 import "@mdoffice/md-ui/css/components.css";
 import "@mdoffice/md-ui/css/colors.css";
 import "@mdoffice/md-ui/css/limitless.datepicker.css";
-import "htmx.org";
+
+import $ from "jquery";
+import "bootstrap";
+import htmx from "htmx.org";
+
+window.$;
+window.htmx = htmx;
+window.initSelect2 = initSelect2;
+
+$(function () {
+  console.log("jQuery is ready");
+});
