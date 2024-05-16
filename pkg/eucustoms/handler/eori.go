@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mdoffice/md-services/internal/eucustoms/model"
+	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 	"github.com/mdoffice/md-services/pkg/core"
 	"github.com/mdoffice/md-services/web/views/eucustom"
 	"github.com/mdoffice/md-services/web/views/search"

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mdoffice/md-services/internal/eucustoms/model"
+	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 )
 
 func (s *EuCustomService) ValidateEori(code string) (data []model.EoriResult, err error) {

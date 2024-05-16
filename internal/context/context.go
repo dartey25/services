@@ -1,10 +1,8 @@
 package context
 
 import (
-	"log"
-
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog"
+	"github.com/mdoffice/md-services/internal/log"
 )
 
 type AppContext struct {
@@ -18,6 +16,6 @@ func NewAppContext(c echo.Context) *AppContext {
 	}
 }
 
-func (c *AppContext) Log() *log.Logger {
-	return c.Get("logger").(*zerolog.Logger)
+func (c *AppContext) Log() log.Logger {
+	return c.Get("logger").(log.Logger)
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mdoffice/md-services/internal/sanctions/service"
+	"github.com/mdoffice/md-services/pkg/sanctions/service"
 )
 
 type SanctionsHandler struct {

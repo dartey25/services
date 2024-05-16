@@ -12,7 +12,7 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/mdoffice/md-services/internal/db"
-	"github.com/mdoffice/md-services/internal/sanctions/model"
+	"github.com/mdoffice/md-services/pkg/sanctions/model"
 	"github.com/xuri/excelize/v2"
 )
 

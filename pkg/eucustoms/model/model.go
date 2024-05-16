@@ -21,7 +21,6 @@ type AeoPaginatedData struct {
 	TotalItems int       `json:"totalItems" db:"TOTAL"`
 	TotalPages int       `json:"totalPages"`
 	Data       []AeoData `json:"data" db:"DATA"`
-	Query      string    `json:"-"`
 }
 
 type AeoData struct {

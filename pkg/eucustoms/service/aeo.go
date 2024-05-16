@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mdoffice/md-services/internal/eucustoms/model"
+	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 )
 
 func (s *EuCustomService) GetCountries() (countries []string, err error) {

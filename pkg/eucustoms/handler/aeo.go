@@ -1,15 +1,13 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mdoffice/md-services/internal/context"
-	"github.com/mdoffice/md-services/internal/eucustoms/model"
 	"github.com/mdoffice/md-services/pkg/core"
+	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 	"github.com/mdoffice/md-services/web/views/eucustom"
 	"github.com/mdoffice/md-services/web/views/search"
 )
@@ -32,7 +30,8 @@ func getAuthTypes(queryTypes []string) []*model.AeoType {
 
 func (h *EuCustomHandler) HandleAeoTab(c echo.Context) error {
 	ctx := c.(*context.AppContext)
-	ctx.Log().Info().Msg("HELLO WORLD")
+	ctx.Log().Info("Hello World")
+	ctx.Log().Infof("Hello %s", "world 2")
 	queryTypes := c.QueryParams()["type"]
 	types := getAuthTypes(queryTypes)
 	countries, err := h.service.GetCountries()
@@ -98,8 +97,6 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 
 	results.Page = params.Page
 	results.Limit = params.Limit
-	results.Query = strings.ToUpper(params.Holder)
-	fmt.Printf("res: %v", results)
 	if isHtmx {
 		return core.Render(c, http.StatusOK, eucustom.AeoResults(results))
 	}

@@ -15,8 +15,9 @@ import (
 	cfg "github.com/mdoffice/md-services/config"
 	appCtx "github.com/mdoffice/md-services/internal/context"
 	database "github.com/mdoffice/md-services/internal/db"
-	"github.com/mdoffice/md-services/internal/eucustoms/handler"
-	"github.com/mdoffice/md-services/internal/eucustoms/service"
+	"github.com/mdoffice/md-services/pkg/eucustoms/handler"
+	"github.com/mdoffice/md-services/pkg/eucustoms/service"
+	"github.com/mdoffice/md-services/pkg/joker"
 	"github.com/mdoffice/md-services/internal/log"
 )
 
@@ -47,13 +48,7 @@ func main() {
 	app.Use(middleware.Recover())
 	app.Use(middleware.CORS())
 	app.Use(middleware.Secure())
-	// AllowOrigins: []string{"https://www.mdoffice.com.ua"},
-	// opts := slog.HandlerOptions{
-	// 	AddSource: true,
-	// 	Level:     slog.LevelInfo,
-	// }
 
-	// Use the request logger middleware with zerolog
 	app.Use(middleware.RequestLoggerWithConfig(log.RequestLoggerConfig(logger)))
 	app.Use(log.LoggerMiddleware(logger))
 
@@ -82,9 +77,8 @@ func main() {
 	euGroup.GET("/eori/form", e.HandleEoriForm)
 	euGroup.GET("/aeo/data", e.HandleGetAeoData)
 	euGroup.GET("/eori/data", e.HandleGetEoriData)
-	app.GET("/joker/eori/validate", e.HandleJokerEoriData)
-	app.POST("/joker/eori/validate", e.HandleJokerEoriData)
 
+	joker.Register(app, s)
 	// sGroup := app.Group("/sanctions")
 	// ss := sanctionsService.NewSanctionsService(es)
 	// ess := sanctionsHandler.NewSanctionsHandler(ss)
@@ -94,6 +88,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
+	logger.Infof("Starting app on port: %d", cfg.Server.Port)
 	go func() {
 		if err := app.Start(fmt.Sprintf(":%v", cfg.Server.Port)); err != nil && err != http.ErrServerClosed {
 			app.Logger.Fatalf("shutting down the server: %v", err)

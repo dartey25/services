@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mdoffice/md-services/internal/eucustoms/service"
+	"github.com/mdoffice/md-services/pkg/eucustoms/service"
 	"github.com/mdoffice/md-services/pkg/core"
 	"github.com/mdoffice/md-services/web/views/eucustom"
 )

@@ -6,7 +6,7 @@ import (
 	"github.com/mdoffice/md-services/web/views/search"
 	"strings"
 	"fmt"
-	"github.com/mdoffice/md-services/internal/eucustoms/model"
+	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 )
 
 templ AeoTab(props AeoFormProps) {
@@ -104,7 +104,7 @@ htmx.addClass(htmx.find("#results"), "d-none")
 htmx.find("#results-body tbody").innerHTML = ""
 }
 
-templ resultTableItem(index int, item model.AeoData, query string) {
+templ resultTableItem(index int, item model.AeoData) {
 	@search.ResultTableRow(index) {
 		@search.ResultTableCol(search.ResultTableColProps{Component: search.HighlightedText(item.HolderHighlight, item.Holder)})
 		@search.ResultTableCol(search.ResultTableColProps{Text: item.IssCountry})
@@ -126,7 +126,7 @@ templ AeoResults(data *model.AeoPaginatedData) {
 	}
 	<tbody hx-swap-oob="beforeend:#results-body tbody">
 		for index, item := range data.Data {
-			@resultTableItem((data.Page-1)*data.Limit+index+1, item, data.Query)
+			@resultTableItem((data.Page-1)*data.Limit+index+1, item)
 		}
 	</tbody>
 	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
