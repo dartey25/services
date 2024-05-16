@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mdoffice/md-services/internal/context"
 	"github.com/mdoffice/md-services/pkg/core"
 	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 	"github.com/mdoffice/md-services/web/views/eucustom"
@@ -29,9 +28,6 @@ func getAuthTypes(queryTypes []string) []*model.AeoType {
 }
 
 func (h *EuCustomHandler) HandleAeoTab(c echo.Context) error {
-	ctx := c.(*context.AppContext)
-	ctx.Log().Info("Hello World")
-	ctx.Log().Infof("Hello %s", "world 2")
 	queryTypes := c.QueryParams()["type"]
 	types := getAuthTypes(queryTypes)
 	countries, err := h.service.GetCountries()

@@ -50,8 +50,12 @@ templ ResultCard(props ResultCardProps) {
 	}
 }
 
-templ ResultFooter() {
-	<div id="results-footer" class="card-footer text-center" hx-swap-oob="outerHTML">
+templ ResultFooter(show bool) {
+	<div id="results-footer" if show {
+	class="card-footer text-center"
+} else {
+	class="card-footer text-center d-none"
+} hx-swap-oob="outerHTML">
 		{ children... }
 	</div>
 }

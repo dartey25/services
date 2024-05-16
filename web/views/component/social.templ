@@ -13,7 +13,7 @@ templ TwitterShare(url string) {
 }
 
 templ CopyShare(url string) {
-	<i class="cursor-pointer mx-1" id="service-clipboard" title="Копіювати посилання">
+	<i class="cursor-pointer mx-1" id="service-clipboard" title="Копіювати посилання" onclick="NotifySuccess('Copied successfully!')">
 		<img src="https://www.mdoffice.com.ua/images/copy.gif"/>
 	</i>
 }

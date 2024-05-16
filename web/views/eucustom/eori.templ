@@ -24,12 +24,12 @@ templ EoriTab() {
 
 templ EoriForm() {
 	<form
-		hx-get="/services/eori/data"
-		hx-target="#results-body"
+		hx-get="/services/eucustom/eori/data"
+		hx-swap="none"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
-		hx-disabled-elt="this"
 		hx-on::before-request={ search.ShowResults() }
+		hx-disabled-elt="this"
 	>
 		@form.Group() {
 			@form.Label("Код")
@@ -56,16 +56,15 @@ templ Badge(data model.EoriDisplayResult) {
 }
 
 templ EoriResults(data model.EoriDisplayResult) {
+	<thead hx-swap-oob="innerHTML:#thead"></thead>
+	<tbody hx-swap-oob="beforeend:#results-body tbody">
+		@search.ResultTableRow(1) {
+			@search.ResultTableCol(search.ResultTableColProps{Text: data.Eori})
+			@search.ResultTableCol(search.ResultTableColProps{Component: Badge(data)})
+			@search.ResultTableCol(search.ResultTableColProps{Text: data.Name})
+			@search.ResultTableCol(search.ResultTableColProps{Text: data.Address})
+		}
+	</tbody>
 	@search.ResultTotalCounter(1, templ.Attributes{"hx-swap-oob": "outerHTML"})
-	@search.ResultMediaList() {
-		@search.ResultMedia(search.ResultMediaProps{Index: 1, Rows: []templ.Component{
-			search.ResultRow(search.ResultRowProps{Label: "Код", Text: data.Eori}),
-			search.ResultRow(search.ResultRowProps{Label: "Статус", Component: Badge(data)}),
-			search.ResultRow(search.ResultRowProps{Label: "Назва",
-				Text: data.Name}),
-			search.ResultRow(search.ResultRowProps{Label: "Адреса", Text: data.Address}),
-		},
-		})
-	}
-	@search.ResultFooter()
+	@search.ResultFooter(false)
 }

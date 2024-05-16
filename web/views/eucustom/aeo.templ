@@ -130,7 +130,7 @@ templ AeoResults(data *model.AeoPaginatedData) {
 		}
 	</tbody>
 	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
-	@search.ResultFooter() {
+	@search.ResultFooter(data.TotalPages > data.Page) {
 		if data.TotalPages > data.Page {
 			@search.ShowMoreBtn(templ.Attributes{
 				"hx-get":       fmt.Sprintf("/services/eucustom/aeo/data?page=%d", data.Page+1),
