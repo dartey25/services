@@ -15,16 +15,16 @@ export default {
       targets: [
         {
           src: "node_modules/@mdoffice/md-ui/fonts/*",
-          dest: "assets/fonts",
+          dest: "../assets/fonts",
         },
       ],
     }),
   ],
-  input: { "js/index": "web/scripts/main.js" },
+  input: { "js/index": "web/src/main.js" },
   external: ["jquery", "htmx.org"],
   output: {
     name: "bundle",
-    dir: "assets",
+    dir: "../assets",
     entryFileNames: "[name].min.js",
     format: "iife",
     globals: {

@@ -1,0 +1,40 @@
+version: "3"
+
+vars:
+  GOARCH: amd64
+  GOOS: "{{if eq OS `Windows_NT`}}windows{{else}}linux{{end}}"
+  BINARY_NAME: "{{if eq OS `Windows_NT`}}services.exe{{else}}services{{end}}"
+  AIR_COMMAND: "{{if eq OS `Windows_NT`}}air -c .air.win.toml{{else}}air{{end}}"
+
+tasks:
+  run:
+    cmds:
+      - go run cmd/main.go
+
+  templ:
+    cmds:
+      - templ generate
+
+  build:
+    deps: [templ]
+    cmds:
+      - go build -o bin/{{.BINARY_NAME}} cmd/main.go
+    env:
+      GOOS: "{{.GOOS}}"
+      GOARCH: "{{.GOARCH}}"
+
+  build-win:
+    deps: [templ]
+    cmds:
+      - go build -o bin/services.exe cmd/main.go
+    env:
+      GOOS: windows
+      GOARCH: "{{.GOARCH}}"
+
+  air:
+    cmds:
+      - "{{.AIR_COMMAND}}"
+
+  web:
+    cmds:
+      - rollup -c web/rollup.config.js

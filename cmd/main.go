@@ -14,11 +14,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	cfg "github.com/mdoffice/md-services/config"
 	appCtx "github.com/mdoffice/md-services/internal/context"
-	database "github.com/mdoffice/md-services/internal/db"
+	"github.com/mdoffice/md-services/internal/database"
+	"github.com/mdoffice/md-services/internal/log"
 	"github.com/mdoffice/md-services/pkg/eucustoms/handler"
 	"github.com/mdoffice/md-services/pkg/eucustoms/service"
 	"github.com/mdoffice/md-services/pkg/joker"
-	"github.com/mdoffice/md-services/internal/log"
 )
 
 func main() {
