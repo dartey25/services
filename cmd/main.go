@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,21 +13,25 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	cfg "github.com/mdoffice/md-services/config"
+	appCtx "github.com/mdoffice/md-services/internal/context"
 	database "github.com/mdoffice/md-services/internal/db"
 	"github.com/mdoffice/md-services/internal/eucustoms/handler"
 	"github.com/mdoffice/md-services/internal/eucustoms/service"
+	"github.com/mdoffice/md-services/internal/log"
 )
 
 func main() {
+	logger := log.NewZeroLog()
+
 	var cfg cfg.Config
 	err := cleanenv.ReadConfig("config.yaml", &cfg)
 	if err != nil {
-		log.Fatal(fmt.Errorf("error reading config: %s", err.Error()))
+		logger.Fatal().Err(fmt.Errorf("error reading config: %s", err.Error()))
 		os.Exit(1)
 	}
 	db, err := database.NewOracleClient(&cfg.Database)
 	if err != nil {
-		log.Fatalf("Error connecting to Oracle: %v", err)
+		logger.Fatal().Err(fmt.Errorf("error connecting to db: %s", err.Error()))
 	}
 	defer db.Close()
 
@@ -42,9 +45,25 @@ func main() {
 	app.HidePort = true
 
 	app.Use(middleware.Recover())
-	app.Use(middleware.Logger())
 	app.Use(middleware.CORS())
+	app.Use(middleware.Secure())
 	// AllowOrigins: []string{"https://www.mdoffice.com.ua"},
+	// opts := slog.HandlerOptions{
+	// 	AddSource: true,
+	// 	Level:     slog.LevelInfo,
+	// }
+
+	// Use the request logger middleware with zerolog
+	app.Use(middleware.RequestLoggerWithConfig(log.RequestLoggerConfig(logger)))
+	app.Use(log.LoggerMiddleware(logger))
+
+	app.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			cc := appCtx.NewAppContext(c)
+			return next(cc)
+		}
+	})
+
 	app.Use(middleware.Gzip())
 	app.Pre(middleware.Rewrite(map[string]string{
 		"/services/*": "/$1",
