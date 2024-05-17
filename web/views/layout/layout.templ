@@ -16,12 +16,13 @@ templ Layout(props LayoutProps) {
 			<title>{ props.Title } - MD Services</title>
 			<link href="/services/static/css/index.min.css" rel="stylesheet" type="text/css"/>
 		</head>
-		<body>
+		<body hx-ext="response-targets">
 			@navbar(props.Navbar)
 			@pageLayout() {
 				{ children... }
 			}
-			<script src="/services/static/js/index.min.js"></script>
+			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
 		</body>
 	</html>
 }

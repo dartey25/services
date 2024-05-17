@@ -17,13 +17,13 @@ templ AeoTabList() {
 }
 
 templ AeoHeader() {
-	Уповноважені економічні оператори
+	Авторизовані економічні оператори
 	@c.SocialButtons("")
 }
 
 templ AeoTab(props AeoFormProps) {
 	<div hx-swap-oob="innerHTML:#main-header>span">
-		Уповноважені економічні оператори
+		Авторизовані економічні оператори
 		@c.SocialButtons("")
 	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
@@ -51,15 +51,12 @@ type AeoFormProps struct {
 	CountryList []string
 }
 
-script InitCountrySelect() {
-  $(document).ready(function() { $("#countrySelect").select2(); });
-}
-
 templ AeoForm(props AeoFormProps) {
 	<form
 		id="search-form"
 		hx-get="/services/eucustom/aeo/data"
-		hx-swap="none"
+		hx-swap="innerHTML"
+		hx-target="#results-body"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
 		hx-on::before-request={ search.ShowResults() }
@@ -100,17 +97,12 @@ templ AeoForm(props AeoFormProps) {
 		@form.BtnGroup(form.BtnGroupProps{Buttons: []templ.Component{
 			c.Button(c.ButtonProps{
 				Text: "Знайти", Variant: "primary", Type: "submit", Icon: "search4", ClassName: "mr-2"}),
-			c.Button(c.ButtonProps{Text: "Очистити", Variant: "light", OnClick: resetForm("#search-form")}),
+			c.Button(c.ButtonProps{Text: "Очистити", Variant: "light"}),
 		}})
+		<div hx-boost="true">
+			<a href="/services/eucustom/">Test</a>
+		</div>
 	</form>
-	<div class="d-none" hx-on::load={ InitCountrySelect() }></div>
-}
-
-script resetForm(selector string) {
-event.preventDefault()
-htmx.find(selector).reset()
-htmx.addClass(htmx.find("#results"), "d-none")
-htmx.find("#results-body tbody").innerHTML = ""
 }
 
 templ resultTableItem(index int, item model.AeoData) {
@@ -129,15 +121,23 @@ templ resultTableItem(index int, item model.AeoData) {
 
 templ AeoResults(data *model.AeoPaginatedData) {
 	if data.Page == 1 {
-		<thead hx-swap-oob="innerHTML:#thead">
-			@AeoResultTableHeader()
-		</thead>
+		<table class="table">
+			<thead>
+				@AeoResultTableHeader()
+			</thead>
+			<tbody>
+				for index, item := range data.Data {
+					@resultTableItem((data.Page-1)*data.Limit+index+1, item)
+				}
+			</tbody>
+		</table>
+	} else {
+		<tbody hx-swap-oob="beforeend:#results-body tbody">
+			for index, item := range data.Data {
+				@resultTableItem((data.Page-1)*data.Limit+index+1, item)
+			}
+		</tbody>
 	}
-	<tbody hx-swap-oob="beforeend:#results-body tbody">
-		for index, item := range data.Data {
-			@resultTableItem((data.Page-1)*data.Limit+index+1, item)
-		}
-	</tbody>
 	@search.ResultTotalCounter(data.TotalItems, templ.Attributes{"hx-swap-oob": "outerHTML"})
 	@search.ResultFooter(data.TotalPages > data.Page) {
 		if data.TotalPages > data.Page {

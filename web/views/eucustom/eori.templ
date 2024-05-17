@@ -25,7 +25,6 @@ templ EoriTab() {
 templ EoriForm() {
 	<form
 		hx-get="/services/eucustom/eori/data"
-		hx-swap="none"
 		hx-target-*="#results-body"
 		hx-indicator="#loading-indicator,#results-body, #results-footer"
 		hx-on::before-request={ search.ShowResults() }

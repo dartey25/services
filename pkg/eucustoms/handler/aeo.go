@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/mdoffice/md-services/internal/context"
 	"github.com/mdoffice/md-services/pkg/core"
 	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 	"github.com/mdoffice/md-services/web/views/eucustom"
@@ -78,17 +79,18 @@ func parseAeoQueryParams(c echo.Context, params *model.AeoQueryParams) {
 }
 
 func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
-	isHtmx := c.Request().Header.Get("HX-Request") == "true"
+	ctx := c.(*context.AppContext)
+	isHtmx := ctx.Request().Header.Get("HX-Request") == "true"
 	var params model.AeoQueryParams
 	parseAeoQueryParams(c, &params)
 
 	if params.Holder == "" && params.Country == "" && len(params.AuthTypes) == 0 {
-		return core.Render(c, http.StatusBadRequest, search.Error("at least one is required"))
+		return ctx.BadRequestTemplate(search.Error("at least one is required"))
 	}
 
 	results, err := h.service.GetAeoData(params)
 	if err != nil {
-		return core.Render(c, http.StatusInternalServerError, search.Error(err.Error()))
+		return ctx.InternalServerErrorTemplate(search.Error(err.Error()))
 	}
 
 	// if u := c.Request().Header.Get("HX-Current-URL"); u != "" {
@@ -99,13 +101,18 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 	// }
 
 	if len(results.Data) == 0 {
-		return core.Render(c, http.StatusNotFound, search.NotFound())
+		return ctx.NotFoundTemplate(search.NotFound())
+	}
+
+	if !isHtmx {
+		return ctx.JSON(http.StatusOK, results)
 	}
 
 	results.Page = params.Page
 	results.Limit = params.Limit
-	if isHtmx {
-		return core.Render(c, http.StatusOK, eucustom.AeoResults(results))
+	if results.Page != 1 {
+		ctx.Response().Header().Set("HX-Reswap", "none")
 	}
-	return c.JSON(http.StatusOK, results)
+
+	return ctx.Template(http.StatusOK, eucustom.AeoResults(results))
 }
