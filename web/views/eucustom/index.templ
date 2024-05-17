@@ -7,7 +7,7 @@ import (
 	"github.com/mdoffice/md-services/web/views/component"
 )
 
-templ Index() {
+templ Index(props AeoFormProps) {
 	@layout.Layout(layout.LayoutProps{
 		Title: "EuCustom",
 		Navbar: layout.NavbarProps{
@@ -20,8 +20,10 @@ templ Index() {
 			Title: "EuCustom",
 		},
 	}) {
-		@layout.MainCard(layout.MainCardProps{Tabs: tabsLayout()}) {
-			<div id="tab-content"></div>
+		@layout.MainCard(layout.MainCardProps{Tabs: tabsLayout(), Header: AeoHeader()}) {
+			<div id="tab-content">
+				@AeoForm(props)
+			</div>
 		}
 		@search.ResultCard(search.ResultCardProps{IsTable: true})
 		@component.Fab()
@@ -31,10 +33,10 @@ templ Index() {
 templ tabsLayout() {
 	<div
 		id="tabs"
-		hx-get="/services/eucustom/aeo"
-		hx-trigger="load"
 		hx-target="#tabs"
 		hx-swap="innerHTML"
 		hx-on::after-request={ search.HideResults() }
-	></div>
+	>
+		@AeoTabList()
+	</div>
 }

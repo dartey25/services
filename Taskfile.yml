@@ -36,5 +36,12 @@ tasks:
       - "{{.AIR_COMMAND}}"
 
   web:
+    dir: web
     cmds:
-      - rollup -c web/rollup.config.js
+      - rollup -c
+    sources:
+      - src/js/**/*.js
+      - src/css/**/*.css
+    generates:
+      - ../assets/js/index.min.js
+      - ../assets/css/index.min.css

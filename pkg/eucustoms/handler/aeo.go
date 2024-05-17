@@ -27,6 +27,17 @@ func getAuthTypes(queryTypes []string) []*model.AeoType {
 	return types
 }
 
+func (h *EuCustomHandler) HandleIndex(c echo.Context) error {
+	queryTypes := c.QueryParams()["type"]
+	types := getAuthTypes(queryTypes)
+	countries, err := h.service.GetCountries()
+	if err != nil {
+		return err
+	}
+
+	return core.Render(c, http.StatusOK, eucustom.Index(eucustom.AeoFormProps{Types: types, CountryList: countries}))
+}
+
 func (h *EuCustomHandler) HandleAeoTab(c echo.Context) error {
 	queryTypes := c.QueryParams()["type"]
 	types := getAuthTypes(queryTypes)

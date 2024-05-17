@@ -9,22 +9,31 @@ import (
 	"github.com/mdoffice/md-services/pkg/eucustoms/model"
 )
 
+templ AeoTabList() {
+	@c.TabList() {
+		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
+		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
+	}
+}
+
+templ AeoHeader() {
+	Уповноважені економічні оператори
+	@c.SocialButtons("")
+}
+
 templ AeoTab(props AeoFormProps) {
 	<div hx-swap-oob="innerHTML:#main-header>span">
 		Уповноважені економічні оператори
 		@c.SocialButtons("")
 	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Пошук по базі даних операторів</div>
-	@c.TabList() {
-		@c.TabItem(c.TabItemProps{Text: "AEO", ContentLink: "/services/eucustom/aeo", IsActive: true})
-		@c.TabItem(c.TabItemProps{Text: "EORI", ContentLink: "/services/eucustom/eori"})
-	}
+	@AeoTabList()
 	<div id="tab-content" role="tabpanel" hx-swap-oob="outerHTML">
 		@AeoForm(props)
 	</div>
 }
 
-templ AeoHeader() {
+templ AeoResultTableHeader() {
 	<tr>
 		<th>№</th>
 		<th>Власник</th>
@@ -121,7 +130,7 @@ templ resultTableItem(index int, item model.AeoData) {
 templ AeoResults(data *model.AeoPaginatedData) {
 	if data.Page == 1 {
 		<thead hx-swap-oob="innerHTML:#thead">
-			@AeoHeader()
+			@AeoResultTableHeader()
 		</thead>
 	}
 	<tbody hx-swap-oob="beforeend:#results-body tbody">

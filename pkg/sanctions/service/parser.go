@@ -11,7 +11,7 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/mdoffice/md-services/internal/db"
+	"github.com/mdoffice/md-services/internal/database"
 	"github.com/mdoffice/md-services/pkg/sanctions/model"
 	"github.com/xuri/excelize/v2"
 )
@@ -170,7 +170,7 @@ func (s *SanctionsService) UploadInBatches(items []*model.SanctionsRow, indexNam
 		buf bytes.Buffer
 		res *esapi.Response
 		raw map[string]interface{}
-		blk *db.BulkResponse
+		blk *database.BulkResponse
 
 		numItems   int
 		numErrors  int

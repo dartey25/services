@@ -2,13 +2,16 @@ package joker
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/mdoffice/md-services/pkg/eucustoms/service"
 	"github.com/mdoffice/md-services/pkg/joker/handler"
 )
 
 func Register(app *echo.Echo, service *service.EuCustomService) {
-	group := app.Group("joker")
+	joker := app.Group("joker")
+	joker.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(20)))
 	handler := handler.New(service)
-	group.GET("/eori/validate", handler.HandleEoriQuery)
-	group.POST("/eori/validate", handler.HandleEoriQuery)
+
+	joker.GET("/eori/validate", handler.HandleEoriQuery)
+	joker.POST("/eori/validate", handler.HandleEoriQuery)
 }

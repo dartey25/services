@@ -1,10 +1,4 @@
-import "../css/style.css";
-import {
-  NotifyError,
-  NotifyInfo,
-  NotifySuccess,
-  initSelect2,
-} from "./functions";
+// md core
 import "@mdoffice/md-ui/css/bootstrap.css";
 import "@mdoffice/md-ui/css/bootstrap_limitless.css";
 import "@mdoffice/md-ui/css/cci.color.css";
@@ -14,11 +8,16 @@ import "@mdoffice/md-ui/css/components.css";
 import "@mdoffice/md-ui/css/colors.css";
 import "@mdoffice/md-ui/css/limitless.datepicker.css";
 
+// libs
 import $ from "jquery";
 import "bootstrap";
 import htmx from "htmx.org";
+
+// custom scripts
+import "../css/style.css";
 import { fabShow, fabHide, fabInit } from "./fab";
-import { scrollToTop } from "./util";
+import { scrollToTop, initSelect2 } from "./util";
+import { NotifyError, NotifyInfo, NotifySuccess } from "./notify";
 
 // Different event handlers and initializations for the page
 $(function () {

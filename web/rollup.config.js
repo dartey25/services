@@ -16,16 +16,16 @@ export default {
     copy({
       targets: [
         {
-          src: "web/node_modules/@mdoffice/md-ui/fonts/*",
-          dest: "assets/fonts",
+          src: "node_modules/@mdoffice/md-ui/fonts/*",
+          dest: "../assets/fonts",
         },
       ],
     }),
   ],
-  input: { "js/index": "web/src/js/main.js" },
+  input: { "js/index": "src/js/main.js" },
   output: {
     name: "bundle",
-    dir: "assets",
+    dir: "../assets",
     entryFileNames: "[name].min.js",
     format: "iife",
   },
