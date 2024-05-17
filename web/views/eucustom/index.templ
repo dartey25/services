@@ -4,6 +4,7 @@ import (
 	"github.com/mdoffice/md-services/web/views/layout"
 	"github.com/mdoffice/md-services/web/views/search"
 	"time"
+	"github.com/mdoffice/md-services/web/views/component"
 )
 
 templ Index() {
@@ -23,6 +24,7 @@ templ Index() {
 			<div id="tab-content"></div>
 		}
 		@search.ResultCard(search.ResultCardProps{IsTable: true})
+		@component.Fab()
 	}
 }
 

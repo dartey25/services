@@ -44,6 +44,13 @@ export function NotifyError(msg) {
  * @param {string} text - text to copy
  */
 export function copyToClipboard(text) {
-  console.log(text);
   Notify.show("success", NotifyType.success);
+}
+
+/**
+ * Scroll to top of content box
+ *
+ */
+export function scrollToTop() {
+  document.getElementsByClassName("content")[0]?.scrollIntoView();
 }

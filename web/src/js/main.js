@@ -17,22 +17,24 @@ import "@mdoffice/md-ui/css/limitless.datepicker.css";
 import $ from "jquery";
 import "bootstrap";
 import htmx from "htmx.org";
+import { fabShow, fabHide, fabInit } from "./fab";
+import { scrollToTop } from "./util";
 
-/**
- * Different event handlers for the page
- */
+// Different event handlers and initializations for the page
 $(function () {
   htmx.on("htmx:sendError", () => {
     NotifyError("Сервер не відповідає");
   });
+  fabInit();
 });
 
-/**
- * Global window functions (make sure to add their types in .d.ts file to make linter happy)
- */
+// Global window functions (make sure to add their types in .d.ts file to make linter happy)
 window.$;
 window.htmx = htmx;
 window.initSelect2 = initSelect2;
 window.NotifySuccess = NotifySuccess;
 window.NotifyInfo = NotifyInfo;
 window.NotifyError = NotifyError;
+window.scrollToTop = scrollToTop;
+window.fabShow = fabShow;
+window.fabHide = fabHide;

@@ -5,4 +5,7 @@ interface Window {
   NotifySuccess: (message: string) => void;
   NotifyInfo: (message: string) => void;
   NotifyError: (message: string) => void;
+  scrollToTop: () => void;
+  fabShow: () => void;
+  fabHide: () => void;
 }
