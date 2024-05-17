@@ -1,3 +1,5 @@
+test12343
+
 # Services
 
 A Go-based microservices project with a modular structure. This project includes various components to demonstrate the implementation of a scalable microservices architecture.
@@ -12,20 +14,22 @@ A Go-based microservices project with a modular structure. This project includes
 ## Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/dartey25/services.git
-    cd services
-    ```
+
+   ```bash
+   git clone https://github.com/dartey25/services.git
+   cd services
+   ```
 
 2. Install dependencies:
-    ```bash
-    go mod tidy
-    ```
+
+   ```bash
+   go mod tidy
+   ```
 
 3. Build the project:
-    ```bash
-    make build
-    ```
+   ```bash
+   make build
+   ```
 
 ## Configuration
 
@@ -43,23 +47,33 @@ database:
 ```
 
 ## Usage
+
 To run the application:
+
 ```bash
 make run
 ```
+
 For live reloading during development, use Air:
+
 ### Running with Air
+
 Install Air:
+
 ```bash
 curl -fLo air https://raw.githubusercontent.com/cosmtrek/air/master/bin/linux/air
 chmod +x air
 sudo mv air /usr/local/bin
 ```
+
 Run the application:
+
 ```bash
 make air
 ```
+
 ## Folder Structure
+
 - `assets`: Static files
 - `cmd`: Main applications
 - `config`: Configuration files
