@@ -1,5 +1,3 @@
-test12343
-
 # Services
 
 A Go-based microservices project with a modular structure. This project includes various components to demonstrate the implementation of a scalable microservices architecture.
