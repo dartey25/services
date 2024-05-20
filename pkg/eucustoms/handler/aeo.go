@@ -100,7 +100,7 @@ func (h *EuCustomHandler) HandleGetAeoData(c echo.Context) error {
 	// 	}
 	// }
 
-	if len(results.Data) == 0 {
+	if results == nil {
 		return ctx.NotFoundTemplate(search.NotFound())
 	}
 
