@@ -24,6 +24,13 @@ $(function () {
   htmx.on("htmx:sendError", () => {
     NotifyError("Сервер не відповідає");
   });
+
+  htmx.on("htmx:responseError", (ev) => {
+    //@ts-ignore
+    if (ev.detail.xhr.status >= 500) {
+      NotifyError("Помилка на сервері");
+    }
+  });
   fabInit();
 });
 

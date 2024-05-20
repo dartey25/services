@@ -6,7 +6,7 @@ import (
 
 type ApiResponse struct {
 	XMLName xml.Name    `xml:"root" json:"-"`
-	Data    interface{} `xml:"results>_" json:"data"`
+	Data    interface{} `xml:"_" json:"data"`
 	Error   string      `xml:"Error,omitempty" json:"message,omitempty"`
 }
 

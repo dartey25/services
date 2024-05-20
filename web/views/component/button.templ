@@ -32,3 +32,34 @@ templ Button(props ButtonProps) {
 		{ props.Text }
 	</button>
 }
+
+type ButtonLinkProps struct {
+	ID             string
+	Text           string
+	Variant        string
+	ClassName      string
+	Icon           string
+	Attributes     templ.Attributes
+	Href           string
+	PreventDefault bool
+}
+
+templ ButtonLink(props ButtonLinkProps) {
+	<a
+		if props.ID !="" {
+			id={ props.ID }
+		}
+		href={ templ.URL(props.Href) }
+		class={ "btn" , fmt.Sprintf("btn-%s",
+  props.Variant), props.ClassName }
+		{ props.Attributes... }
+		if props.PreventDefault {
+			onclick="event.preventDefault()"
+		}
+	>
+		if props.Icon != "" {
+			<i class={ fmt.Sprintf("icon-%s", props.Icon), "mr-2" }></i>
+		}
+		{ props.Text }
+	</a>
+}

@@ -16,23 +16,24 @@ type AeoQueryParams struct {
 }
 
 type AeoPaginatedData struct {
-	Page       int       `json:"page"`
-	Limit      int       `json:"-"`
-	TotalItems int       `json:"totalItems" db:"TOTAL"`
-	TotalPages int       `json:"totalPages"`
-	Data       []AeoData `json:"data" db:"DATA"`
+	XMLName    xml.Name  `xml:"results"`
+	Page       int       `json:"page" xml:"page"`
+	Limit      int       `json:"-" xml:"-"`
+	TotalItems int       `json:"totalItems" db:"TOTAL" xml:"totalItems"`
+	TotalPages int       `json:"totalPages" xml:"totalPages"`
+	Data       []AeoData `json:"data" db:"DATA" xml:"item"`
 }
 
 type AeoData struct {
-	Id              int          `json:"id" db:"ID"`
-	Holder          string       `json:"holder,omitempty" db:"NAME"`
-	HolderHighlight string       `xml:"-" db:"-"`
-	IssCountry      string       `json:"issCountry,omitempty" db:"CNT"`
-	CusCode         string       `json:"cusCode,omitempty" db:"CUSTOM"`
-	AuthType        string       `json:"authType,omitempty" db:"CERT"`
-	EffDate         string       `json:"effDate,omitempty" db:"EFFDATE"`
-	CreatedAt       time.Time    `json:"createdAt" db:"DATE_CREATE"`
-	DeletedAt       sql.NullTime `json:"deletedAt,omitempty" db:"DATE_DELETE"`
+	Id              int          `json:"id" db:"ID" xml:"id"`
+	Holder          string       `json:"holder,omitempty" db:"NAME" xml:"holder"`
+	HolderHighlight string       `xml:"-" db:"-" xml:"-"`
+	IssCountry      string       `json:"issCountry,omitempty" db:"CNT" xml:"issCountry,omitempty"`
+	CusCode         string       `json:"cusCode,omitempty" db:"CUSTOM" xml:"cusCode,omitempty"`
+	AuthType        string       `json:"authType,omitempty" db:"CERT" xml:"authType,omitempty"`
+	EffDate         string       `json:"effDate,omitempty" db:"EFFDATE" xml:"effDate,omitempty"`
+	CreatedAt       time.Time    `json:"createdAt" db:"DATE_CREATE" xml:"-"`
+	DeletedAt       sql.NullTime `json:"deletedAt,omitempty" db:"DATE_DELETE" xml:"-"`
 }
 
 type AeoType struct {

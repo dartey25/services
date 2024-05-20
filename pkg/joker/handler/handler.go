@@ -1,11 +1,20 @@
 package handler
 
-import "github.com/mdoffice/md-services/pkg/eucustoms/service"
+import (
+	"github.com/mdoffice/md-services/pkg/eucustoms/service"
+)
+
+type Services struct {
+	eucustom *service.EuCustomService
+}
 
 type JokerHandler struct {
-	svc *service.EuCustomService
+	svc Services
 }
 
 func New(s *service.EuCustomService) *JokerHandler {
-	return &JokerHandler{svc: s}
+	services := Services{
+		eucustom: s,
+	}
+	return &JokerHandler{svc: services}
 }

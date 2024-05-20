@@ -10,7 +10,7 @@ import (
 templ EoriTab() {
 	<div hx-swap-oob="innerHTML:#main-header>span">
 		Перевірка коду EORI
-		@c.SocialButtons("")
+		@c.SocialButtons("/eucustom/")
 	</div>
 	<div hx-swap-oob="innerHTML:#main-description">Перевірити правильність коду</div>
 	@c.TabList() {

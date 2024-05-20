@@ -12,6 +12,6 @@ func Register(app *echo.Echo, service *service.EuCustomService) {
 	joker.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(20)))
 	handler := handler.New(service)
 
-	joker.GET("/eori/validate", handler.HandleEoriQuery)
 	joker.POST("/eori/validate", handler.HandleEoriQuery)
+	joker.POST("/aeo/q", handler.HandleAeoQuery)
 }

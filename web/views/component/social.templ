@@ -1,21 +1,27 @@
 package component
 
+import "fmt"
+
 templ FacebookShare(url string) {
-	<a class="mx-1" href="aMDOSocial.away?p_share=fb&p_url={url}" target="_blank" title="Facebook">
+	<a class="mx-1" href={ templ.SafeURL(makeShareUrl(url, "fb")) } target="_blank" title="Facebook">
 		<img src="https://www.mdoffice.com.ua/images/icons/social_fb2.png"/>
 	</a>
 }
 
 templ TwitterShare(url string) {
-	<a class="mx-1" href="aMDOSocial.away?p_share=tw&p_url={url}" target="_blank" title="Twitter">
+	<a class="mx-1" href={ templ.SafeURL(makeShareUrl(url, "tw")) } target="_blank" title="Twitter">
 		<img src="https://www.mdoffice.com.ua/images/icons/social_tw2.png"/>
 	</a>
 }
 
 templ CopyShare(url string) {
-	<i class="cursor-pointer mx-1" id="service-clipboard" title="Копіювати посилання" onclick="NotifySuccess('Copied successfully!')">
+	<i class="cursor-pointer mx-1" id="service-clipboard" title="Копіювати посилання" onclick="NotifySuccess('Успішно скопійовано!')">
 		<img src="https://www.mdoffice.com.ua/images/copy.gif"/>
 	</i>
+}
+
+func makeShareUrl(url, provider string) string {
+	return fmt.Sprintf("/ua/aMDOSocial.away?p_share=%s&p_url=http://www.mdoffice.com.ua/services%s", provider, url)
 }
 
 templ SocialButtons(url string) {
